@@ -33,13 +33,13 @@ class Map(Analysis):
             colours.apply(lambda x: csv.write('.states[iso_a2='+self.codes[self.codes.id==x.country]['code'].values[0].upper()+'] {\n\tfill: '+x.colour+'\n}\n'),axis=1)
 
     @staticmethod
-    def _draw_gradient_scale(data,path,name=''):
+    def _draw_gradient_scale(data,path,name='',start_colour='rgb(255,0,0)',end_colour='rgb(184,255,0)'):
         with open(path,'r+') as svg:
             minimum = min(data)
             maximum = max(data)
             onethird = (maximum-minimum)/3
             svg.seek(-6,2) #skip to the position right before </svg> tag
-            svg.write('<defs>  <linearGradient id=\"grad2\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"0%\">\n      <stop offset=\"0%\" style=\"stop-color:rgb(255,255,0);stop-opacity:1\" />\n      <stop offset=\"100%\" style=\"stop-color:rgb(255,0,0);stop-opacity:1\" />\n    </linearGradient>\n  </defs>\n  <rect x=\"610\" y=\"375\" height=\"25\" width=\"175\" fill=\"url(#grad2)\" />\n  \n<text x=\"610\" y=\"365\" font-family=\"sans-serif\" font-size=\"11\" fill=\"black\">' +str(int(minimum))+ '</text>\n  <line x1=\"613\" y1=\"368\" x2=\"613\" y2=\"388\"/>\n\n<text x=\"665\" y=\"365\" font-family=\"sans-serif\" font-size=\"11\" fill=\"black\">' +str(int(onethird))+ '</text>\n  <line x1=\"672\" y1=\"368\" x2=\"672\" y2=\"388\"/>\n\n  <text x=\"720\" y=\"365\" font-family=\"sans-serif\" font-size=\"11\" fill=\"black\">' +str(int(onethird*2))+ '</text>\n  <line x1=\"727\" y1=\"368\" x2=\"727\" y2=\"388\"/>\n\n<text x=\"775\" y=\"365\" font-family=\"sans-serif\" font-size=\"11\" fill=\"black\">' +str(int(maximum))+ '</text>\n  <line x1=\"782\" y1=\"368\" x2=\"782\" y2=\"388\"/>\n\n  <text x=\"610\" y=\"415\" font-family=\"sans-serif\" font-size=\"15\" fill=\"black\">' +name+'</text></svg>')
+            svg.write('<defs>  <linearGradient id=\"grad2\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"0%\">\n      <stop offset=\"0%\" style=\"stop-color:'+start_colour+';stop-opacity:1\" />\n      <stop offset=\"100%\" style=\"stop-color:'+end_colour+';stop-opacity:1\" />\n    </linearGradient>\n  </defs>\n  <rect x=\"610\" y=\"375\" height=\"25\" width=\"175\" fill=\"url(#grad2)\" />\n  \n<text x=\"610\" y=\"365\" font-family=\"sans-serif\" font-size=\"11\" fill=\"black\">' +str(int(minimum))+ '</text>\n  <line x1=\"613\" y1=\"368\" x2=\"613\" y2=\"388\"/>\n\n<text x=\"665\" y=\"365\" font-family=\"sans-serif\" font-size=\"11\" fill=\"black\">' +str(int(onethird+minimum))+ '</text>\n  <line x1=\"672\" y1=\"368\" x2=\"672\" y2=\"388\"/>\n\n  <text x=\"720\" y=\"365\" font-family=\"sans-serif\" font-size=\"11\" fill=\"black\">' +str(int(onethird*2+minimum))+ '</text>\n  <line x1=\"727\" y1=\"368\" x2=\"727\" y2=\"388\"/>\n\n<text x=\"775\" y=\"365\" font-family=\"sans-serif\" font-size=\"11\" fill=\"black\">' +str(int(maximum))+ '</text>\n  <line x1=\"782\" y1=\"368\" x2=\"782\" y2=\"388\"/>\n\n  <text x=\"610\" y=\"415\" font-family=\"sans-serif\" font-size=\"15\" fill=\"black\">' +name+'</text></svg>')
     
     def number_of_answers(self,draw_legend=True):
         data = self._number_of_answers()
@@ -62,3 +62,14 @@ class Map(Analysis):
                 self.k.generate(self.config,outfile=self.current_dir+'/maps/responsetime.svg',stylesheet=css.read())
             if draw_legend:
                 self._draw_gradient_scale(data,self.current_dir+'/maps/responsetime.svg',u'Rychlost odpovede')
+    
+    def avg_success(self,draw_legend=True):
+        data = self._avg_success()
+        if not data.empty:
+            colours = Analysis.colour_range(data)
+            self._generate_csv(colours)
+    
+            with open(self.current_dir+'/base/style.css') as css:
+                self.k.generate(self.config,outfile=self.current_dir+'/maps/avgsuccess.svg',stylesheet=css.read())
+            if draw_legend:
+                self._draw_gradient_scale(data,self.current_dir+'/maps/avgsuccess.svg',u'Priemerna uspesnost')

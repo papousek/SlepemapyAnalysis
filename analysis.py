@@ -2,6 +2,7 @@
 
 import pandas as pd
 import numpy as np
+import colorsys
 
 '''data analysis on dataframes
 '''
@@ -54,7 +55,7 @@ class Analysis():
     '''
     @staticmethod
     def colour_value_rgb(r,g,b):
-        return '\'rgb('+str(int(r))+', '+str(int(g))+', '+str(int(b))+')\';'''
+        return '\'rgb('+str(int(r))+', '+str(int(g))+', '+str(int(b))+')\';'
     
     '''generates evenly distributed colour scheme
     '''
@@ -71,11 +72,16 @@ class Analysis():
     def colour_range(data):
         maximum = max(data)
         coefficients = data.apply(lambda x: x/float(maximum))
-        coefficients = coefficients.apply(lambda y: Analysis.colour_value_rgb(255,255-y*255,0))
+        coefficients = coefficients.apply(lambda y: Analysis.colour_value_rgb(255-y*255,y*255,0))
         coefficients = coefficients.reset_index()
         coefficients.columns = ['country','colour']
         return coefficients
     
+    '''@staticmethod
+    def colour_value_rgb(val, minval=0, maxval=25):
+        h = (float(val-minval) / (maxval-minval)) * 120
+        r, g, b = colorsys.hsv_to_rgb(h/360, 1., 1.)
+        return '\'rgb('+str(int(r*255,))+', '+str(int(g*255,))+', '+str(int(b*255,))+')\';'''
     ############################################################################
     '''returns counts of weekdays (first value -Monday etc)
     '''
@@ -131,8 +137,8 @@ class Analysis():
     '''
     def _avg_success(self,threshold=0):
         result = pd.DataFrame()
-        result['avg_success_rate'] = groups.apply(lambda x: None if len(x)<threshold else len(x[x.place_asked==x.place_answered])/float(len(x)))
-        result['avg_response_time'] = groups['response_time_log'].mean()
+        groups = self.frame.groupby('place_asked')
+        result = groups.apply(lambda x: None if len(x)<threshold else len(x[x.place_asked==x.place_answered])/float(len(x))*100)
         return result.dropna()
     
     ############################################################################

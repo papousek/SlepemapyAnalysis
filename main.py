@@ -11,7 +11,7 @@ codes = input.load_general_csv(current_path+"/base/areas.csv")
 csv = input.load_geo_csv(current_path+"/base/large.csv")
 
 a = Analysis(csv,user=10)
-m = Map(current_path,codes,csv)
+m = Map(current_path,codes,csv,user=10)
 g = Graph(current_path,csv,user=10)
 
 matplotlib.interactive(False)

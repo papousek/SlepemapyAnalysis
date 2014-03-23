@@ -213,3 +213,12 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+base/large.csv
+base/small.csv
+graphs/lengthsofsessions.svg
+graphs/responsetimetinserted.svg
+maps/avgsuccess.svg
+maps/numberofanswers.svg
+maps/responsetime.svg
+base/style.css
+base/style.css
