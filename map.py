@@ -32,6 +32,13 @@ class Map(Analysis):
         with open(self.current_dir+'/base/style.css','w+') as csv:
             colours.apply(lambda x: csv.write('.states[iso_a2='+self.codes[self.codes.id==x.country]['code'].values[0].upper()+'] {\n\tfill: '+x.colour+'\n}\n'),axis=1)
 
+    '''@staticmethod
+    def _draw_bins(colours,path):
+        with open(path,'r+') as svg:
+            svg.seek(-6,2) #skip to the position right before </svg> tag
+            for i in range(1,len(colours)):
+                svg.write('''
+    
     @staticmethod
     def _draw_gradient_scale(data,path,name='',start_colour='rgb(255,0,0)',end_colour='rgb(184,255,0)'):
         with open(path,'r+') as svg:
@@ -73,3 +80,18 @@ class Map(Analysis):
                 self.k.generate(self.config,outfile=self.current_dir+'/maps/avgsuccess.svg',stylesheet=css.read())
             if draw_legend:
                 self._draw_gradient_scale(data,self.current_dir+'/maps/avgsuccess.svg',u'Priemerna uspesnost')
+    
+    def mistaken_countries(self,threshold=1000,draw_legend=True):
+        data = self._mistaken_countries(threshold)
+        if not data.empty:
+            colours = Analysis.colour_range_even(data)
+            self._generate_csv(colours)
+            
+            with open(self.current_dir+'/base/style.css') as css:
+                self.k.generate(self.config,outfile=self.current_dir+'/maps/mistakencountries.svg',stylesheet=css.read())
+            
+            colours['label'] = np.arange(threshold+1)
+            colours['label'] = colours['label'].astype(object)
+            colours[:1]['label'] = 'Vybrana krajina'
+            if draw_legend:
+                self._draw_bins(colours,self.current_dir+'/maps/responsetime.svg',u'Rychlost odpovede')
