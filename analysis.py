@@ -125,7 +125,7 @@ class Analysis():
             answers = answers[answers.place_asked==answers.place_answered]
         elif right == False:
             answers = answers[answers.place_asked!=answers.place_answered]
-        return answers[['inserted','response_time']]
+        return answers[['inserted','response_time_log']]
     
     '''returns series of countries that are most mistaken
     '''
