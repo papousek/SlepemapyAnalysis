@@ -2,6 +2,8 @@
 
 import pandas as pd
 import numpy as np
+import datetime
+import colorsys
 
 '''data analysis on dataframes
 '''
@@ -56,6 +58,11 @@ class Analysis():
     def colour_value_rgb(r,g,b):
         return '\'rgb('+str(int(r))+', '+str(int(g))+', '+str(int(b))+')\';'
     
+    @staticmethod
+    def colour_value_hsv(h,s=1,v=1):
+        colors = colorsys.hsv_to_rgb(h,s,v)
+        return Analysis.colour_value_rgb(255*colors[0],255*colors[1],255*colors[2])
+        
     '''generates evenly distributed colour scheme
     '''
     @staticmethod
@@ -69,6 +76,16 @@ class Analysis():
             colors[:1]['colour']=Analysis.colour_value_rgb(0,192,255)
         return colors
     
+    @staticmethod
+    def colour_range_hsv(data):
+        maximum = max(data)
+        coefficients = data.apply(lambda x: x/float(maximum) if pd.notnull(x) else None)
+        coefficients = coefficients.apply(lambda y: Analysis.colour_value_rgb(0,192,255) if pd.isnull(y) else Analysis.colour_value_hsv(y*0.22))
+        coefficients = coefficients.reset_index()
+        coefficients.columns = ['country','colour']
+        coefficients['country'] = coefficients['country'].astype(np.int64)
+        return coefficients
+        
     '''
     good colour schemes: (0,255-y*255,255)
                         (255,255-y*255,0)
@@ -78,7 +95,7 @@ class Analysis():
     def colour_range(data):
         maximum = max(data)
         coefficients = data.apply(lambda x: x/float(maximum) if pd.notnull(x) else None)
-        coefficients = coefficients.apply(lambda y: Analysis.colour_value_rgb(0,192,255) if pd.isnull(y) else Analysis.colour_value_rgb(255-y*255,y*255,0))
+        coefficients = coefficients.apply(lambda y: Analysis.colour_value_rgb(0,192,255) if pd.isnull(y) else Analysis.colour_value_rgb(255-y*71,y*255,0))
         coefficients = coefficients.reset_index()
         coefficients.columns = ['country','colour']
         coefficients['country'] = coefficients['country'].astype(np.int64)
@@ -87,10 +104,22 @@ class Analysis():
     '''returns counts of weekdays (first value -Monday etc)
     '''
     def _weekdays(self):
-        f = lambda x: datetime.datetime.weekday(x)
-        weekdays = self.frame.inserted.apply(f)
-        return weekdays.value_counts(sort=False,ascending=True)
+        data = pd.DataFrame()
+        data['weekday'] = pd.DatetimeIndex(self.frame.inserted).weekday
+        counts = pd.DataFrame(np.arange(7)*0)
+        return (counts[0]+data.weekday.value_counts()).fillna(0)
 
+    def _months(self):
+        data = pd.DataFrame()
+        data['month'] = pd.DatetimeIndex(self.frame.inserted).month
+        counts = pd.DataFrame(np.arange(13)*0)
+        return (counts[0]+data.month.value_counts()).fillna(0)[1:]
+
+    def _hours(self):
+        data = pd.DataFrame()
+        data['hour'] = pd.DatetimeIndex(self.frame.inserted).hour
+        counts = pd.DataFrame(np.arange(24)*0)
+        return (counts[0]+data.hour.value_counts()).fillna(0)
 
     '''returns dictionary where key is country id and the value is amount of times this country was answered
     parameter right(True/False/None) is to filter only right/wrong/both answers
@@ -101,7 +130,7 @@ class Analysis():
             countries = self.frame[self.frame.place_asked==self.frame.place_answered]
         elif right==False:
             countries = self.frame[self.frame.place_asked!=self.frame.place_answered]
-        return countries['place_answered'].value_counts()
+        return countries['place_asked'].value_counts()
     
     ############################################################################
     '''returns df of responseTime, place_answered]
@@ -143,7 +172,8 @@ class Analysis():
     def _avg_success(self,threshold=0):
         result = pd.DataFrame()
         groups = self.frame.groupby('place_asked')
-        result = groups.apply(lambda x: None if len(x)<threshold else len(x[x.place_asked==x.place_answered])/float(len(x))*100)
+        result['mean_success_rate'] = groups.apply(lambda x: None if len(x)<threshold else len(x[x.place_asked==x.place_answered])/float(len(x))*100)
+        result['mean_response_time'] = groups.response_time.mean()
         return result.dropna()
     
     ############################################################################

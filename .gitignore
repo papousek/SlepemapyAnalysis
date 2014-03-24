@@ -226,3 +226,9 @@ base/style.css
 *.css
 maps/mistakencountries.svg
 base/style.css
+graphs/avgsuccessresponse.svg
+graphs/months.svg
+graphs/hours.svg
+graphs/weekdays.svg
+graphs/responsetimearea.svg
+base/style.css

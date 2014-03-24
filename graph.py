@@ -7,16 +7,17 @@ import matplotlib
 '''used for drawing graphs
 '''
 class Graph(Analysis):
-    def __init__(self,path,df,user=None,place_asked=None,response_time_threshold=60000,lower_bound = 50,upper_bound = 236,session_duration= np.timedelta64(30, 'm')):
+    def __init__(self,path,df=None,codes=None,user=None,place_asked=None,response_time_threshold=60000,lower_bound = 50,upper_bound = 236,session_duration= np.timedelta64(30, 'm')):
         Analysis.__init__(self,df,user,place_asked,response_time_threshold,lower_bound,upper_bound,session_duration)
         self.current_dir = path
-        
+        self.codes = codes
+
         matplotlib.interactive(False)
         matplotlib.rc('font', **{'sans-serif' : 'Arial','family' : 'sans-serif'}) #nice font that can display non-ascii characters
         
     '''weekdays bar plot
     '''
-    def weekdays(self, width = 0.35, colour = "b"):
+    def weekday_activity(self, width = 0.35, colour = "b"):
         data = self._weekdays()
         if not data.empty:
             ind = np.arange(7)
@@ -30,12 +31,42 @@ class Graph(Analysis):
             ax.set_xticklabels( (u"Pondelok", u"Utorok", u"Streda", u"Štvrtok", u"Piatok",u"Sobota",u"Nedeľa"))
     
             plt.savefig(self.current_dir+'\\graphs\\weekdays.svg', bbox_inches='tight')
-        
+    
+    def month_activity(self, width = 0.35, colour = "b"):
+        data = self._months()
+        if not data.empty:
+            ind = np.arange(12)
+            
+            fig, ax = plt.subplots()
+            bars = ax.bar(ind+width/2, data, width, color=colour)
+            ax.set_xticks(ind+width)
+            
+            ax.set_ylabel(u"Počty otázok")
+            ax.set_title(u"Počty otázok v jednotlivých mesiacoch")
+            ax.set_xticklabels( (u"Január", u"Február", u"Marec", u"Apríl", u"Máj",u"Jún",u"Júl",u"August",u"September",u"Október",u"November",u"December"))
+    
+            plt.savefig(self.current_dir+'\\graphs\\months.svg', bbox_inches='tight')
+
+    def hour_activity(self, width = 0.35, colour = "b"):
+        data = self._hours()
+        if not data.empty:
+            ind = np.arange(24)
+            
+            fig, ax = plt.subplots()
+            bars = ax.bar(ind+width/2, data, width, color=colour)
+            ax.set_xticks(ind+width)
+            
+            ax.set_ylabel(u"Počty otázok")
+            ax.set_title(u"Počty otázok v jednotlivých hodinách")
+            ax.set_xticklabels(np.arange(24))
+    
+            plt.savefig(self.current_dir+'\\graphs\\hours.svg', bbox_inches='tight')
+    
     '''draws inserted to response_time plot 
     optional parameter wrongTimes - can be set to additional set of points to draw
     for example right/wrong answers 
     '''
-    def response_time_inserted(self, right=None, colour1 = 'green',colour2 = 'red',):
+    def response_time_inserted(self, right=None, colour1 = 'green',colour2 = 'red',name='responsetimeinserted'):
         if right is None:
             input1 = self._response_time_inserted(True)
         else:
@@ -56,26 +87,60 @@ class Graph(Analysis):
                     plt.plot_date(input2['inserted'],input2['response_time_log'],color = colour2,marker='o',ls='')
             
             fig.autofmt_xdate()
-            plt.savefig(self.current_dir+'\\graphs\\responsetimetinserted.svg', bbox_inches='tight')
+            plt.savefig(self.current_dir+'\\graphs\\'+name+'.svg', bbox_inches='tight')
     
     '''bar plot of session length
     '''
-    def lengths_of_sessions(self, width = 0.35, colour = "b"):
+    def lengths_of_sessions(self, width = 0.35, colour = "cyan"):
         data = self._sessions_start_end()
         if not data.empty:
             ind = np.arange(len(data))
             fig, ax = plt.subplots()
-            
+            data = data.reset_index()
             data['start'] = matplotlib.dates.date2num(data['start'])
             data['end'] = matplotlib.dates.date2num(data['end'])
-            #data['str'] = data.apply(lambda x: str(x['start'][0])+'\n-'+str(x['end'][0]))
-            #ax.bar(ind+width/2,data['start'], width, color=colour)
-            #ax.xaxis_date()
-            plt.plot_date(data['start'],data['end']-data['start'],color = colour)
-            #ax.set_xticks(ind+width)
+            #ax.bar(ind+width/2,data['end']-data['start'], width, color=colour)
+            plt.plot_date(data['end']-data['start'],data['session_number'],color = colour)
+            #ax.set_xticks(d)
             
             ax.set_ylabel(u"Dĺžka session")
             ax.set_title(u"Začiatok a koniec session")
             
-            #fig.autofmt_xdate()
+            ax.autofmt_xdate()
             plt.savefig(self.current_dir+'\\graphs\\lengthsofsessions.svg', bbox_inches='tight')
+    
+    def response_time_area(self,colour="cyan",top_label=5):
+        data = self._response_time_place()
+        if not data.empty:
+            data = pd.DataFrame(data)
+            data = data.reset_index()
+            areas = self.codes.reset_index()
+            data.columns = ['id','response_time']
+            data = data.merge(areas)
+            
+            fig,ax = plt.subplots()
+            ax.set_ylabel(u"Veľkosť štátu")
+            ax.set_xlabel(u"Priemerná rýchlosť odpovede")
+            ax.set_yscale('log')
+            data['area'] = np.log(data['area'])
+            plt.plot(data['response_time'],data['area'],marker="o",ls='',color=colour)
+
+            data = data.sort('response_time')
+            for i in range(top_label):
+                ax.annotate(data['code'][-top_label:].values[i],(data['response_time'][-top_label:].values[i],data['area'][-top_label:].values[i]))
+            plt.savefig(self.current_dir+'\\graphs\\responsetimearea.svg', bbox_inches='tight')    
+
+    def response_time_session(self,right=None):
+        data = Graph(self.current_dir)
+        data.set_frame(self.frame.groupby('session_number'))
+        data = data.response_time_inserted(right,name='responsetimesession')
+    
+    def avg_success(self,colour = "cyan",threshold=0):
+        data = self._avg_success(threshold)
+        if not data.empty:
+            fig,ax = plt.subplots()
+            ax.set_ylabel(u"Priemerná rýchlosť odpovede")
+            ax.set_xlabel(u"Priemerná úspešnosť")
+            plt.plot(data['mean_success_rate'],data['mean_response_time'],marker="o",ls='',color=colour)
+
+            plt.savefig(self.current_dir+'\\graphs\\avgsuccessresponse.svg', bbox_inches='tight')            
