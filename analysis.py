@@ -3,7 +3,6 @@
 import pandas as pd
 import numpy as np
 import datetime
-import colorsys
 
 '''data analysis on dataframes
 '''
@@ -15,7 +14,7 @@ class Analysis():
     parameters user and place_asked are to be used for filtering for country/user specific analysis
     '''
     def __init__(self,df=None,user=None,place_asked=None,response_time_threshold=60000,lower_bound = 50,upper_bound = 236,session_duration= np.timedelta64(30, 'm')):
-        pd.options.mode.chained_assignment = None
+        pd.options.mode.chained_assignment = None #disabling useless warning from pandas
         self.session_duration = session_duration
         if df is not None:            
             self.frame = df[(df.place_asked>lower_bound) & (df.place_asked<upper_bound)] #not sure about this operator, should filter out only countries
@@ -52,55 +51,7 @@ class Analysis():
         self.frame['session_number'] = (self.frame['inserted'] - self.frame['inserted'].shift(1) > self.session_duration).fillna(1).cumsum() #adds session numbers to every row
     
     ############################################################################
-    '''returns string in format rgb('r','g','b');
-    '''
-    @staticmethod
-    def colour_value_rgb(r,g,b):
-        return '\'rgb('+str(int(r))+', '+str(int(g))+', '+str(int(b))+')\';'
-    
-    @staticmethod
-    def colour_value_hsv(h,s=1,v=1):
-        colors = colorsys.hsv_to_rgb(h,s,v)
-        return Analysis.colour_value_rgb(255*colors[0],255*colors[1],255*colors[2])
-        
-    '''generates evenly distributed colour scheme
-    '''
-    @staticmethod
-    def colour_range_even(data):
-        length = len(data)
-        colors = [Analysis.colour_value_rgb(255,255*x/float(length),0) for x in range(length)]
-        colors = pd.DataFrame(colors,data.country)
-        colors = colors.reset_index() 
-        colors.columns = ['country','colour']
-        if pd.isnull(data[:1].counts).values[0]:
-            colors[:1]['colour']=Analysis.colour_value_rgb(0,192,255)
-        return colors
-    
-    @staticmethod
-    def colour_range_hsv(data):
-        maximum = max(data)
-        coefficients = data.apply(lambda x: x/float(maximum) if pd.notnull(x) else None)
-        coefficients = coefficients.apply(lambda y: Analysis.colour_value_rgb(0,192,255) if pd.isnull(y) else Analysis.colour_value_hsv(y*0.22))
-        coefficients = coefficients.reset_index()
-        coefficients.columns = ['country','colour']
-        coefficients['country'] = coefficients['country'].astype(np.int64)
-        return coefficients
-        
-    '''
-    good colour schemes: (0,255-y*255,255)
-                        (255,255-y*255,0)
-                        (255-y*255,y*255,0)
-    '''
-    @staticmethod
-    def colour_range(data):
-        maximum = max(data)
-        coefficients = data.apply(lambda x: x/float(maximum) if pd.notnull(x) else None)
-        coefficients = coefficients.apply(lambda y: Analysis.colour_value_rgb(0,192,255) if pd.isnull(y) else Analysis.colour_value_rgb(255-y*71,y*255,0))
-        coefficients = coefficients.reset_index()
-        coefficients.columns = ['country','colour']
-        coefficients['country'] = coefficients['country'].astype(np.int64)
-        return coefficients
-    ############################################################################
+
     '''returns counts of weekdays (first value -Monday etc)
     '''
     def _weekdays(self):

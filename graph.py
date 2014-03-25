@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from analysis import *
+from drawer import Drawer
 import matplotlib.pyplot as plt
 import matplotlib
 
-'''used for drawing graphs
-'''
-class Graph(Analysis):
+class Graph(Analysis,Drawer):
+
     def __init__(self,path,df=None,codes=None,user=None,place_asked=None,response_time_threshold=60000,lower_bound = 50,upper_bound = 236,session_duration= np.timedelta64(30, 'm')):
         Analysis.__init__(self,df,user,place_asked,response_time_threshold,lower_bound,upper_bound,session_duration)
-        self.current_dir = path
-        self.codes = codes
+        Drawer.__init__(self,path,codes)
 
         matplotlib.interactive(False)
         matplotlib.rc('font', **{'sans-serif' : 'Arial','family' : 'sans-serif'}) #nice font that can display non-ascii characters
@@ -109,14 +108,13 @@ class Graph(Analysis):
             ax.autofmt_xdate()
             plt.savefig(self.current_dir+'\\graphs\\lengthsofsessions.svg', bbox_inches='tight')
     
-    def response_time_area(self,colour="cyan",top_label=5):
+    def response_time_area(self,colour="cyan",threshold=5,name='responsetimearea'):
         data = self._response_time_place()
         if not data.empty:
             data = pd.DataFrame(data)
             data = data.reset_index()
-            areas = self.codes.reset_index()
             data.columns = ['id','response_time']
-            data = data.merge(areas)
+            data['area'] = self.codes['area']
             
             fig,ax = plt.subplots()
             ax.set_ylabel(u"Veľkosť štátu")
@@ -125,13 +123,13 @@ class Graph(Analysis):
             data['area'] = np.log(data['area'])
             plt.plot(data['response_time'],data['area'],marker="o",ls='',color=colour)
 
-            data = data.sort('response_time')
-            for i in range(top_label):
-                ax.annotate(data['code'][-top_label:].values[i],(data['response_time'][-top_label:].values[i],data['area'][-top_label:].values[i]))
-            plt.savefig(self.current_dir+'\\graphs\\responsetimearea.svg', bbox_inches='tight')    
+            data = data.sort('response_time',ascending=False)
+            for i in range(threshold):
+                ax.annotate(self.get_country_name(data['id'].values[i]),(data['response_time'].values[i],data['area'].values[i]))
+            plt.savefig(self.current_dir+'\\graphs\\'+name+'.svg', bbox_inches='tight')    
 
     def response_time_session(self,right=None):
-        data = Graph(self.current_dir)
+        data = Graph(self.current_dir,self.codes)
         data.set_frame(self.frame.groupby('session_number'))
         data = data.response_time_inserted(right,name='responsetimesession')
     

@@ -11,9 +11,9 @@ class Importer():
         df = read_csv(filepath, parse_dates=[5],dtype=types,index_col='id')
         return df
     
-    def load_general_csv(self,filepath,columns = None):
+    def load_general_csv(self,filepath,columns = None,enc = 'utf-8'):
         if columns is not None:
-            df = read_csv(filepath,usecols=columns)
+            df = read_csv(filepath,usecols=columns,encoding=enc)
         else:
-            df = read_csv(filepath)
+            df = read_csv(filepath,encoding=enc)
         return df

@@ -9,7 +9,7 @@ from os import path,listdir
 class Exporter():
     '''generates very simple html with all svg pictures attached
     '''
-    def generate_index_html(path):
+    def generate_index_html(self,path):
         with open(path+'\\index.html','w+') as index:
             index.write('<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8">\n<title>Statistics generated from blind maps</title>\n<//head>\n<body>\n')
                 
