@@ -60,12 +60,6 @@ class Analysis():
         counts = pd.DataFrame(np.arange(7)*0)
         return (counts[0]+data.weekday.value_counts()).fillna(0)
 
-    def _months(self):
-        data = pd.DataFrame()
-        data['month'] = pd.DatetimeIndex(self.frame.inserted).month
-        counts = pd.DataFrame(np.arange(13)*0)
-        return (counts[0]+data.month.value_counts()).fillna(0)[1:]
-
     def _hours(self):
         data = pd.DataFrame()
         data['hour'] = pd.DatetimeIndex(self.frame.inserted).hour
@@ -109,14 +103,17 @@ class Analysis():
     
     '''returns series of countries that are most mistaken
     '''
-    def _mistaken_countries(self,threshold=1000):
+    def _mistaken_countries(self,threshold=None):
         wrong_answers = self.frame[self.frame.place_asked!=self.frame.place_answered]
         wrong_answers = wrong_answers['place_answered'].value_counts()
         wrong_answers[str(self.frame.place_asked.values[0])] = None
         wrong_answers = wrong_answers.reset_index()
         wrong_answers.columns = ['country','counts']
         wrong_answers['country'] = wrong_answers['country'].astype(np.int64)
-        return wrong_answers[-1:].append(wrong_answers[:threshold])
+        if threshold is None:
+            return wrong_answers
+        else:
+            return wrong_answers[:threshold]
         
     '''calculates average success rate + average response times, threshold is minimum amount of answers user needs to have in order to be considered in calculations
     '''

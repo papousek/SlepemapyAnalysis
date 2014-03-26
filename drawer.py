@@ -18,47 +18,39 @@ class Drawer():
     '''returns string in format 'rgb(r,g,b)'
     '''
     @staticmethod
-    def colour_value_rgb(r,g,b):
+    def colour_value_rgb_string(r,g,b):
         return '\'rgb('+str(int(r))+', '+str(int(g))+', '+str(int(b))+')\''
     
     @staticmethod
     def colour_value_hsv(h,s=1,v=1):
         colors = colorsys.hsv_to_rgb(h,s,v)
-        return Drawer.colour_value_rgb(255*colors[0],255*colors[1],255*colors[2])
+        return Drawer.colour_value_rgb_string(255*colors[0],255*colors[1],255*colors[2])
         
     '''generates evenly distributed colour scheme
     '''
     @staticmethod
     def colour_range_even(data):
         length = len(data)
-        colors = [Drawer.colour_value_rgb(255,255*x/float(length),0) for x in range(length)]
+        colors = [Drawer.colour_value_rgb_string(255,255*x/float(length),0) for x in range(length)]
         colors = pd.DataFrame(colors,data.country)
         colors = colors.reset_index() 
         colors.columns = ['country','colour']
         if pd.isnull(data[:1].counts).values[0]:
-            colors[:1]['colour']=Drawer.colour_value_rgb(0,192,255)
+            colors[:1]['colour']=Drawer.colour_value_rgb_string(0,192,255)
         return colors
     
+    #0.35 is nice constant, for 4 bins you get green, yellow, orange and red, all easily distinguishable from each other
+    @staticmethod
+    def colour_range_bins(length,hue_limit=0.35):
+        colors = [Drawer.colour_value_hsv((hue_limit*x)/length) for x in range(length)]
+        return colors
+
     @staticmethod
     def colour_range_hsv(data):
-        maximum = max(data)
-        coefficients = data.apply(lambda x: x/float(maximum) if pd.notnull(x) else None)
-        coefficients = coefficients.apply(lambda y: Drawer.colour_value_rgb(0,192,255) if pd.isnull(y) else Drawer.colour_value_hsv(y*0.22))
-        coefficients = coefficients.reset_index()
-        coefficients.columns = ['country','colour']
-        coefficients['country'] = coefficients['country'].astype(np.int64)
-        return coefficients
-        
-    '''
-    good colour schemes: (0,255-y*255,255)
-                        (255,255-y*255,0)
-                        (255-y*255,y*255,0)
-    '''
-    @staticmethod
-    def colour_range_rgb(data):
-        maximum = max(data)
-        coefficients = data.apply(lambda x: x/float(maximum) if pd.notnull(x) else None)
-        coefficients = coefficients.apply(lambda y: Drawer.colour_value_rgb(0,192,255) if pd.isnull(y) else Drawer.colour_value_rgb(255-y*71,y*255,0))
+        minimum = data.min()
+        maximum = data.max()
+        coefficients = data.apply(lambda x: (x-minimum)/float(maximum-minimum) if pd.notnull(x) else None)
+        coefficients = coefficients.apply(lambda y: Drawer.colour_value_rgb_string(0,192,255) if pd.isnull(y) else Drawer.colour_value_hsv(y*0.22))
         coefficients = coefficients.reset_index()
         coefficients.columns = ['country','colour']
         coefficients['country'] = coefficients['country'].astype(np.int64)
@@ -100,10 +92,10 @@ class Drawer():
             for i in range(len(data)):
                 svg.write(  '<rect x=\"0\" y=\"'+str((i+1)*bin_width)+
                             '\" width=\"'+str(bin_width)+'\" height=\"'+str(bin_width)+
-                            '" fill='+data.values[i][1]+ '/>\n')
+                            '" fill='+data.values[i][0]+ '/>\n')
                 svg.write(  '<text x=\"20\" y=\"'+str((i+1)*bin_width+11)+
                             '\" stroke=\"none\" fill=\"black\" font-size=\"'+str(font_size)+
-                            '" font-family=\"sans-serif\">'+data.values[i][2]+'</text>\n')
+                           '" font-family=\"sans-serif\">'+data.values[i][1]+'</text>\n')
             svg.write('</g>\n</svg>') #group
     
     @staticmethod

@@ -20,7 +20,10 @@ class Exporter():
             svg = listdir(path+'/maps/')
             for map in svg:
                 index.write("<img src=\".\\maps\\"+map+"\">\n")
-
+            
+            svg = listdir(path+'/animations/')
+            for animation in svg:
+                index.write("<img src=\".\\animations\\"+animation+"\">\n")
             index.write('</body>\n</html>')
 
     @staticmethod
