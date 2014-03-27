@@ -16,6 +16,7 @@ class Analysis():
     def __init__(self,df=None,user=None,place_asked=None,response_time_threshold=60000,lower_bound = 50,upper_bound = 236,session_duration= np.timedelta64(30, 'm')):
         pd.options.mode.chained_assignment = None #disabling useless warning from pandas
         self.session_duration = session_duration
+        self.place_asked = place_asked
         if df is not None:            
             self.frame = df[(df.place_asked>lower_bound) & (df.place_asked<upper_bound)] #not sure about this operator, should filter out only countries
             
@@ -106,14 +107,7 @@ class Analysis():
     def _mistaken_countries(self,threshold=None):
         wrong_answers = self.frame[self.frame.place_asked!=self.frame.place_answered]
         wrong_answers = wrong_answers['place_answered'].value_counts()
-        wrong_answers[str(self.frame.place_asked.values[0])] = None
-        wrong_answers = wrong_answers.reset_index()
-        wrong_answers.columns = ['country','counts']
-        wrong_answers['country'] = wrong_answers['country'].astype(np.int64)
-        if threshold is None:
-            return wrong_answers
-        else:
-            return wrong_answers[:threshold]
+        return wrong_answers[:threshold]
         
     '''calculates average success rate + average response times, threshold is minimum amount of answers user needs to have in order to be considered in calculations
     '''
