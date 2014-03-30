@@ -1,117 +1,519 @@
-.states[iso_a2=SN] {
-	fill: 'rgb(41, 255, 0)';
-}
-.states[iso_a2=MR] {
+.states[iso_a2=BY] {
 	fill: 'rgb(108, 255, 0)';
 }
-.states[iso_a2=NE] {
-	fill: 'rgb(175, 255, 0)';
+.states[iso_a2=RO] {
+	fill: 'rgb(108, 255, 0)';
 }
-.states[iso_a2=BF] {
+.states[iso_a2=DZ] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=MN] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=KZ] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=TN] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=SE] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=PE] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=PH] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=AR] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=SO] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=MA] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=UA] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=LY] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=ET] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=NO] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=EC] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=TR] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=NP] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=CL] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=ES] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=FI] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=UY] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=CD] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=VE] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=FR] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=SD] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=IR] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=CO] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=IT] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=CF] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=SA] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=NZ] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=IS] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=VN] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=ID] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=PY] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=PK] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=KP] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=KR] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=GR] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=GB] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=GY] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=CM] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=TH] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=TJ] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=BO] {
+	fill: 'rgb(108, 255, 0)';
+}
+.states[iso_a2=IQ] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=MY] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=SY] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=SR] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=AF] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=ER] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=BD] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=KH] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=MW] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=OM] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=KG] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=YE] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=EG] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=EH] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=TD] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=LA] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=SS] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=BR] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=UZ] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=NA] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=MG] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=CA] {
 	fill: 'rgb(242, 255, 0)';
 }
 .states[iso_a2=NG] {
 	fill: 'rgb(242, 255, 0)';
 }
-.states[iso_a2=TD] {
-	fill: 'rgb(255, 200, 0)';
+.states[iso_a2=PG] {
+	fill: 'rgb(242, 255, 0)';
 }
-.states[iso_a2=DZ] {
-	fill: 'rgb(255, 200, 0)';
+.states[iso_a2=TZ] {
+	fill: 'rgb(242, 255, 0)';
 }
-.states[iso_a2=GH] {
-	fill: 'rgb(255, 200, 0)';
-}
-.states[iso_a2=BJ] {
-	fill: 'rgb(255, 200, 0)';
-}
-.states[iso_a2=CF] {
-	fill: 'rgb(255, 133, 0)';
-}
-.states[iso_a2=ZW] {
-	fill: 'rgb(255, 133, 0)';
-}
-.states[iso_a2=TN] {
-	fill: 'rgb(255, 133, 0)';
-}
-.states[iso_a2=MZ] {
-	fill: 'rgb(255, 133, 0)';
-}
-.states[iso_a2=PH] {
-	fill: 'rgb(255, 133, 0)';
-}
-.states[iso_a2=MW] {
-	fill: 'rgb(255, 133, 0)';
-}
-.states[iso_a2=SS] {
-	fill: 'rgb(255, 133, 0)';
-}
-.states[iso_a2=SL] {
-	fill: 'rgb(255, 133, 0)';
-}
-.states[iso_a2=SO] {
-	fill: 'rgb(255, 133, 0)';
-}
-.states[iso_a2=ET] {
-	fill: 'rgb(255, 66, 0)';
-}
-.states[iso_a2=GA] {
-	fill: 'rgb(255, 66, 0)';
+.states[iso_a2=ZA] {
+	fill: 'rgb(242, 255, 0)';
 }
 .states[iso_a2=AO] {
-	fill: 'rgb(255, 66, 0)';
+	fill: 'rgb(242, 255, 0)';
 }
-.states[iso_a2=CD] {
-	fill: 'rgb(255, 66, 0)';
+.states[iso_a2=HN] {
+	fill: 'rgb(242, 255, 0)';
 }
-.states[iso_a2=ID] {
-	fill: 'rgb(255, 0, 0)';
+.states[iso_a2=GH] {
+	fill: 'rgb(242, 255, 0)';
 }
-.states[iso_a2=NA] {
-	fill: 'rgb(255, 0, 0)';
+.states[iso_a2=GL] {
+	fill: 'rgb(242, 255, 0)';
 }
-.states[iso_a2=EH] {
-	fill: 'rgb(255, 0, 0)';
+.states[iso_a2=MZ] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=MR] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=SB] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=KE] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=JP] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=SN] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=US] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=BW] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=CI] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=TM] {
+	fill: 'rgb(242, 255, 0)';
 }
 .states[iso_a2=UG] {
-	fill: 'rgb(255, 0, 0)';
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=AU] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=BF] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=GA] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=PL] {
+	fill: 'rgb(242, 255, 0)';
 }
 .states[iso_a2=GN] {
-	fill: 'rgb(255, 0, 0)';
+	fill: 'rgb(242, 255, 0)';
 }
-.states[iso_a2=LA] {
-	fill: 'rgb(255, 0, 0)';
+.states[iso_a2=NI] {
+	fill: 'rgb(242, 255, 0)';
 }
-.states[iso_a2=ER] {
-	fill: 'rgb(255, 0, 0)';
+.states[iso_a2=ZM] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=DE] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=MX] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=NE] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=ZW] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=SI] {
+	fill: 'rgb(242, 255, 0)';
 }
 .states[iso_a2=CG] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=ML] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=MM] {
+	fill: 'rgb(242, 255, 0)';
+}
+.states[iso_a2=BG] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=MD] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=LT] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=CN] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=BA] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=AL] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=LV] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=IN] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=MK] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=ME] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=RU] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=RS] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=HR] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=EE] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=XK] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=HU] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=NL] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=BE] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=CH] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=DK] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=AT] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=PT] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=IE] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=BT] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=GE] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=TW] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=AM] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=AZ] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=SZ] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=LK] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=BS] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=JO] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=AE] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=BI] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=PA] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=LS] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=DJ] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=FK] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=DO] {
+	fill: 'rgb(255, 133, 0)';
+}
+.states[iso_a2=JM] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=BJ] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=SK] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=BZ] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=GQ] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=IL] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=CU] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=GW] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=TG] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=CR] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=XS] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=HT] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=PR] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=GM] {
 	fill: 'rgb(255, 0, 0)';
 }
 .states[iso_a2=LR] {
 	fill: 'rgb(255, 0, 0)';
 }
-.states[iso_a2=MY] {
+.states[iso_a2=SV] {
 	fill: 'rgb(255, 0, 0)';
 }
-.states[iso_a2=TZ] {
+.states[iso_a2=GT] {
 	fill: 'rgb(255, 0, 0)';
 }
-.states[iso_a2=CM] {
+.states[iso_a2=CZ] {
 	fill: 'rgb(255, 0, 0)';
 }
-.states[iso_a2=OM] {
+.states[iso_a2=SL] {
 	fill: 'rgb(255, 0, 0)';
 }
-.states[iso_a2=MA] {
+.states[iso_a2=RW] {
 	fill: 'rgb(255, 0, 0)';
 }
-.states[iso_a2=PA] {
+.states[iso_a2=NC] {
 	fill: 'rgb(255, 0, 0)';
 }
-.states[iso_a2=BI] {
+.states[iso_a2=FJ] {
 	fill: 'rgb(255, 0, 0)';
 }
-.states[iso_a2=ML] {
-	fill: 'rgb(0, 192, 255)';
+.states[iso_a2=LU] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=TF] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=QA] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=KW] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=BN] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=CY] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=TL] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=PS] {
+	fill: 'rgb(255, 0, 0)';
+}
+.states[iso_a2=LB] {
+	fill: 'rgb(255, 0, 0)';
 }

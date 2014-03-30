@@ -28,7 +28,7 @@ class Map(Analysis,Drawer):
     def set_config(self,config):
         self.config = config
     
-    def _generate_css(self,data,path='',optional_css=''):
+    def generate_css(self,data,path='',optional_css=''):
         if not path:
             path = self.current_dir+'/base/style.css'
         with open(path,'w+') as css:
@@ -57,20 +57,35 @@ class Map(Analysis,Drawer):
     '''nested-mean classification,num should be power of 2
     '''
     @staticmethod
-    def nested_means_classification(data,number_of_bins=4):
-        if len(data)<number_of_bins:
+    def nested_means_classification(data,classes=4):
+        if len(data)<classes:
             return [data.min()-1,data.max()+1]
-        breaks = [data.min()-1,data.max()+1]+Map._nested_means_classification(data,np.log2(number_of_bins))
+        breaks = [data.min()-1,data.max()+1]+Map._nested_means_classification(data,np.log2(classes))
         breaks.sort()
         return breaks
     
     @staticmethod
-    def equidistant_classification(data,number_of_bins=4):
-        x = (data.max() - data.min())/num
-        breaks = [data.min()-1,data.max()+1]+[i*x for i in range(1,num)]
+    def equidistant_classification(data,classes=4):
+        x = (data.max() - data.min())/classes
+        breaks = [data.min()-1,data.max()+1]+[i*x for i in range(1,classes)]
         breaks.sort()
         return breaks
     
+    @staticmethod
+    def quantile_classification(data,classes=7):
+        input = data
+        input.sort()
+        input = input.tolist()
+        breaks = []
+        for i in range(classes):
+            a = (len(data))*i / float(classes)
+            aa = int(a)
+            Xq = (1 - a + aa) * input[aa] + (a-aa) * input[aa+1]
+            breaks.append(Xq)
+        breaks.append(input[-1]+1)
+        breaks[0]-=1
+        return breaks
+            
     @staticmethod
     def bin_data(data,binning_function,number_of_bins=4,draw_legend=True,additional_countries=None,additional_labels=[]):
         binned = pd.DataFrame(data)
@@ -117,7 +132,7 @@ class Map(Analysis,Drawer):
             picked = Drawer.colour_value_hsv(0.54)
             place = pd.DataFrame([[self.place_asked,picked[0],picked[1],picked[2]]],columns=['country','r','g','b'])
             (data,colours) = Map.bin_data(data,binning_function,number_of_bins,draw_legend,additional_countries=place,additional_labels=[self.get_country_name(self.place_asked)])
-            self._generate_css(data[['country','r','g','b']])
+            self.generate_css(data[['country','r','g','b']])
 
         self.draw_map(path,title,colours)
 
@@ -131,7 +146,7 @@ class Map(Analysis,Drawer):
         colours = None
         if not data.empty:
             (data,colours) = Map.bin_data(data,binning_function,number_of_bins,draw_legend)
-            self._generate_css(data[['country','r','g','b']])
+            self.generate_css(data[['country','r','g','b']])
 
         self.draw_map(path,title,colours)
     
@@ -145,7 +160,7 @@ class Map(Analysis,Drawer):
         colours = None
         if not data.empty:
             (data,colours) = Map.bin_data(data,binning_function,number_of_bins,draw_legend)
-            self._generate_css(data[['country','r','g','b']])
+            self.generate_css(data[['country','r','g','b']])
 
         self.draw_map(path,title,colours)
 
@@ -159,13 +174,13 @@ class Map(Analysis,Drawer):
         colours = None
         if not data.empty:
             (data,colours) = Map.bin_data(data,binning_function,number_of_bins,draw_legend)
-            self._generate_css(data[['country','r','g','b']])
+            self.generate_css(data[['country','r','g','b']])
 
         self.draw_map(path,title,colours)   
     
     def avg_success_by_session(self):
         data = Map(self.current_dir,codes=self.codes)
-        maximum = max(self.frame.session_number)
+        maximum = self.frame.session_number.max()
         for i in range(0,maximum+1):
             data.set_frame(self.frame[self.frame.session_number<=i])
             filename = self.current_dir+'animations/map '+str(i+1)+' of '+str(maximum+1)+'.svg'

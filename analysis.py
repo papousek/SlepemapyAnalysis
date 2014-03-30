@@ -50,7 +50,6 @@ class Analysis():
     def _add_session_numbers(self):
         self.frame = self.frame.sort(['inserted'])
         self.frame['session_number'] = (self.frame['inserted'] - self.frame['inserted'].shift(1) > self.session_duration).fillna(1).cumsum() #adds session numbers to every row
-    
     ############################################################################
 
     '''returns counts of weekdays (first value -Monday etc)
@@ -94,13 +93,16 @@ class Analysis():
     '''returns df of responseTime,insrted
     for right/wrong/both answers (rightOrWrong=True/False/None respectivelly)
     '''
-    def _response_time_inserted(self,right=None):
+    def _response_time_inserted(self,right=None,log=True):
         answers = self.frame
         if right:
             answers = answers[answers.place_asked==answers.place_answered]
         elif right == False:
             answers = answers[answers.place_asked!=answers.place_answered]
-        return answers[['inserted','response_time_log']]
+        if log:
+            return answers[['inserted','response_time_log']]
+        else:
+            return answers[['inserted','response_time']]
     
     '''returns series of countries that are most mistaken
     '''
@@ -118,6 +120,20 @@ class Analysis():
         result['mean_response_time'] = groups.response_time.mean()
         return result.dropna()
     
+    def _learning(self):
+        first_questions = self.frame.groupby('session_number').apply(lambda x: x.drop_duplicates(cols=['place_asked']))
+        rate = []
+        time = []
+        for i in range(1,len(first_questions)+1):
+            data = Analysis()
+            data.set_frame(first_questions[:i])
+            data = data._avg_success()
+            rate+=data['mean_success_rate'].tolist()
+            time+=data['mean_response_time'].tolist()
+        first_questions['mean_success_rate'] = rate
+        first_questions['mean_response_time'] = time
+        return first_questions
+        
     ############################################################################
     def _sessions_start_end(self):
         result = pd.DataFrame()
