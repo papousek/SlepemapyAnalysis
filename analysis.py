@@ -50,6 +50,16 @@ class Analysis():
     def _add_session_numbers(self):
         self.frame = self.frame.sort(['inserted'])
         self.frame['session_number'] = (self.frame['inserted'] - self.frame['inserted'].shift(1) > self.session_duration).fillna(1).cumsum() #adds session numbers to every row
+        
+    def _sessions_start_end(self):
+        result = pd.DataFrame()
+        group = self.frame.groupby('session_number')
+        result['start'] = group.first()['inserted']
+        result['end'] = group.last()['inserted']
+        return result
+        
+    def _first_questions(self):
+        return self.frame.groupby('session_number').apply(lambda x: x.drop_duplicates(cols=['place_asked']))
     ############################################################################
 
     '''returns counts of weekdays (first value -Monday etc)
@@ -77,7 +87,6 @@ class Analysis():
             countries = self.frame[self.frame.place_asked!=self.frame.place_answered]
         return countries['place_asked'].value_counts()
     
-    ############################################################################
     '''returns df of responseTime, place_answered]
     for right/wrong/both answers (rightOrWrong=True/False/None respectivelly)
     '''
@@ -110,35 +119,31 @@ class Analysis():
         wrong_answers = self.frame[self.frame.place_asked!=self.frame.place_answered]
         wrong_answers = wrong_answers['place_answered'].value_counts()
         return wrong_answers[:threshold]
-        
-    '''calculates average success rate + average response times, threshold is minimum amount of answers user needs to have in order to be considered in calculations
-    '''
-    def _avg_success(self,threshold=0):
+    
+    def _avg_success_by_place(self):
         result = pd.DataFrame()
         groups = self.frame.groupby('place_asked')
-        result['mean_success_rate'] = groups.apply(lambda x: None if len(x)<threshold else len(x[x.place_asked==x.place_answered])/float(len(x))*100)
+        result['mean_success_rate'] = groups.apply(lambda x: len(x[x.place_asked==x.place_answered])/float(len(x))*100)
         result['mean_response_time'] = groups.response_time.mean()
         return result.dropna()
     
+    def _avg_success_combined(self):
+        return (len(self.frame[self.frame.place_asked==self.frame.place_answered])/float(len(self.frame.place_asked))*100,self.frame.response_time.mean())
+    
     def _learning(self):
-        first_questions = self.frame.groupby('session_number').apply(lambda x: x.drop_duplicates(cols=['place_asked']))
-        rate = []
-        time = []
-        for i in range(1,len(first_questions)+1):
-            data = Analysis()
-            data.set_frame(first_questions[:i])
-            data = data._avg_success()
-            rate+=data['mean_success_rate'].tolist()
-            time+=data['mean_response_time'].tolist()
-        first_questions['mean_success_rate'] = rate
-        first_questions['mean_response_time'] = time
-        return first_questions
-        
-    ############################################################################
-    def _sessions_start_end(self):
+        first_questions = self._first_questions()
+        rates = []
+        times = []
+        limit = self.frame.session_number.max()+1
+
+        for i in range(0,limit):
+            temp = Analysis()
+            temp.set_frame(first_questions[first_questions.session_number<=i])
+            temp = temp._avg_success_combined()
+            rates += [temp[0]]
+            times += [temp[1]]
+
         result = pd.DataFrame()
-        group = self.frame.groupby('session_number')
-        result['start'] = group.first()['inserted']
-        result['end'] = group.last()['inserted']
+        result['mean_success_rate'] = rates
+        result['mean_response_time'] = times
         return result
-        

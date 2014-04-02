@@ -4,6 +4,7 @@ from analysis import *
 from kartograph import Kartograph
 from drawer import Drawer
 from datetime import datetime
+import sys
 
 '''used for drawing maps
 '''
@@ -54,7 +55,7 @@ class Map(Analysis,Drawer):
         mean = data.mean()
         return [mean]+Map._nested_means_classification(data[data<mean],num-1)+Map._nested_means_classification(data[data>=mean],num-1)
     
-    '''nested-mean classification,num should be power of 2
+    '''nested-mean classification,classes should be a number that is power of 2
     '''
     @staticmethod
     def nested_means_classification(data,classes=4):
@@ -72,22 +73,58 @@ class Map(Analysis,Drawer):
         return breaks
     
     @staticmethod
-    def quantile_classification(data,classes=7):
-        input = data
+    def jenks_classification(data, classes=4) :
+        input = data.copy()
         input.sort()
         input = input.tolist()
+        length = len(data)
+        
+        #define initial values of the LC and OP 
+        lower_class_limits = [[1 for x in range(0,classes+1)] if y==0 else [0 for x in range(0,classes+1)] for y in range(0,length+1)] #LC
+        variance_combinations = [[0 for x in range(0,classes+1)] if y==0 else [sys.maxint for x in range(0,classes+1)] for y in range(0,length+1)] #OP
+        variance = 0
+    
+        #calculate optimal LC
+        for i in range(1,length):
+            sum = 0 #SZ
+            sum_squares = 0 #ZSQ
+            counter = 0 #WT
+    
+            for j in range(0,i+1):
+                i3 = i - j + 1 #III
+                value = input[i3-1]
+                counter+=1 #WT
+    
+                sum += value
+                sum_squares += value * value
+                variance = sum_squares - (sum * sum) / counter
+                i4 = i3 - 1 #IV
+                
+                if (i4 != 0) :
+                    for k in range(0,classes+1):
+                        #deciding whether an addition of this element will increase the class variance beyond the limit
+                        #if it does, break the class
+                        if (variance_combinations[i][k] >= (variance + variance_combinations[i4][k - 1])) :
+                            lower_class_limits[i][k] = i3
+                            variance_combinations[i][k] = variance + variance_combinations[i4][k - 1]
+            lower_class_limits[i][1] = 1
+            variance_combinations[i][1] = variance #we can use variance_combinations in calculations of goodness-of-fit, but we do not need it right now
+        
+        #create breaks
+        length -= 1
         breaks = []
-        for i in range(classes):
-            a = (len(data))*i / float(classes)
-            aa = int(a)
-            Xq = (1 - a + aa) * input[aa] + (a-aa) * input[aa+1]
-            breaks.append(Xq)
-        breaks.append(input[-1]+1)
-        breaks[0]-=1
+        breaks.append(input[0]-1) #append lower bound that was not found during calculations
+        breaks.append(input[length]+1) #append upper bound that was not found during calculations
+        while (classes > 1):
+            breaks.append(input[lower_class_limits[length][classes] - 2])
+            length = lower_class_limits[length][classes] -1
+            classes-=1
+
+        breaks.sort()
         return breaks
-            
+
     @staticmethod
-    def bin_data(data,binning_function,number_of_bins=4,draw_legend=True,additional_countries=None,additional_labels=[]):
+    def bin_data(data,binning_function,number_of_bins=6,draw_legend=True,additional_countries=None,additional_labels=[]):
         binned = pd.DataFrame(data)
         binned = binned.reset_index()
         binned.columns=['country','counts']
@@ -120,11 +157,11 @@ class Map(Analysis,Drawer):
         if title:
             self.draw_title(path,title)
     ############################################################################
-    def mistaken_countries(self,binning_function=None,draw_legend=True,path='',title='Mistaken countries',number_of_bins=4):
+    def mistaken_countries(self,binning_function=None,draw_legend=True,path='',title='Mistaken countries',number_of_bins=6):
         if not path:
             path = self.current_dir+'/maps/mistakencountries.svg'
         if not binning_function:
-            binning_function = Map.nested_means_classification
+            binning_function = Map.jenks_classification
 
         data = self._mistaken_countries()
         colours = None
@@ -136,11 +173,11 @@ class Map(Analysis,Drawer):
 
         self.draw_map(path,title,colours)
 
-    def number_of_answers(self,binning_function=None,draw_legend=True,path='',title='Number of answers',number_of_bins=4):
+    def number_of_answers(self,binning_function=None,draw_legend=True,path='',title='Number of answers',number_of_bins=6):
         if not path:
             path = self.current_dir+'/maps/numberofanswers.svg'
         if not binning_function:
-            binning_function = Map.nested_means_classification
+            binning_function = Map.jenks_classification
 
         data = self._number_of_answers()
         colours = None
@@ -150,11 +187,11 @@ class Map(Analysis,Drawer):
 
         self.draw_map(path,title,colours)
     
-    def response_time(self,binning_function=None,draw_legend=True,path='',title='Response time',number_of_bins=4):
+    def response_time(self,binning_function=None,draw_legend=True,path='',title='Response time',number_of_bins=6):
         if not path:
             path = self.current_dir+'/maps/responsetime.svg'
         if not binning_function:
-            binning_function = Map.nested_means_classification
+            binning_function = Map.jenks_classification
 
         data = self._response_time_place()
         colours = None
@@ -164,12 +201,12 @@ class Map(Analysis,Drawer):
 
         self.draw_map(path,title,colours)
 
-    def avg_success(self,binning_function=None,draw_legend=True,path='',title='Average success rate',number_of_bins=4):
+    def avg_success(self,binning_function=None,draw_legend=True,path='',title='Average success rate',number_of_bins=6):
         if not path:
             path = self.current_dir+'/maps/avgsuccess.svg'
         if not binning_function:
-            binning_function = Map.nested_means_classification
-        data = self._avg_success()['mean_success_rate']
+            binning_function = Map.jenks_classification
+        data = self._avg_success_by_place()['mean_success_rate']
 
         colours = None
         if not data.empty:

@@ -16,9 +16,21 @@ g = Graph(current_path,csv,codes,user=10)
 am = Map(current_path,csv,codes)
 ag = Graph(current_path,csv,codes)
 
+
 '''g.lengths_of_sessions()
-g.weekday(width = 0.5, colour = 'cyan')
+g.learning()
+
+ag.weekday_activity()
+ag.hourly_activity()
+ag.response_time_area()
+
+
+m.mistaken_countries()
+am.number_of_answers()
+am.response_time()
+am.avg_success()
 '''
+
 
 '''
 ex = Exporter()

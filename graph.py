@@ -27,9 +27,9 @@ class Graph(Analysis,Drawer):
             bars = ax.bar(ind+width/2, data, width, color=colour)
             ax.set_xticks(ind+width)
             
-            ax.set_ylabel(u"Počty otázok")
-            ax.set_title(u"Počty otázok v jednotlivých dňoch týždňa")
-            ax.set_xticklabels( (u"Pondelok", u"Utorok", u"Streda", u"Štvrtok", u"Piatok",u"Sobota",u"Nedeľa"))
+            ax.set_ylabel(u"Number of questions")
+            ax.set_title(u"Number of questions per weekday")
+            ax.set_xticklabels( (u"Monday", u"Tuesday", u"Wednesday", u"Thursday", u"Friday",u"Saturday",u"Sunday"))
     
             plt.savefig(path, bbox_inches='tight')
 
@@ -44,8 +44,8 @@ class Graph(Analysis,Drawer):
             bars = ax.bar(ind+width/2, data, width, color=colour)
             ax.set_xticks(ind+width)
             
-            ax.set_ylabel(u"Počty otázok")
-            ax.set_title(u"Počty otázok v jednotlivých hodinách")
+            ax.set_ylabel(u"Number of questions")
+            ax.set_title(u"Number of questions per hour")
             ax.set_xticklabels(np.arange(24))
     
             plt.savefig(path, bbox_inches='tight')
@@ -100,9 +100,9 @@ class Graph(Analysis,Drawer):
             data['start'] = matplotlib.dates.date2num(data['start'])
             data['end'] = matplotlib.dates.date2num(data['end'])
 
-            ax.bar(data['start'],data['end']-data['start'], width, color=colour)
+            ax.bar(data['start'],data['end']-data['start'], color=colour)
             ax.xaxis_date()
-            
+
             ax.set_ylabel(u"Length of session")
             ax.set_xlabel(u"Date of session")
             ax.set_title(u"Lengths of sessions over time")
@@ -135,33 +135,22 @@ class Graph(Analysis,Drawer):
             plt.savefig(path, bbox_inches='tight')  
             plt.close()  
 
-    def response_time_session(self,right=None,log=True,lower_bound=0,upper_bound=None):
-        if upper_bound is None:
-            maximum = self.frame.session_number.max()
-        else:
-            maximum = upper_bound
-        data = Graph(self.current_dir,codes=self.codes)
-        for i in range(lower_bound,maximum+1):
-            data.set_frame(self.frame[self.frame.session_number==i])
-            filename = self.current_dir+'/animations/graph '+str(i+1)+' of '+str(maximum+1)+'.svg'
-            data.response_time_inserted(path=filename,log=log)
-
     def learning(self,path=None):
         if not path:
             path = self.current_dir+'/graphs/learning.svg'
         data = self._learning()
+        data = data.join(self._sessions_start_end())
         if not data.empty:
             fig, ax1 = plt.subplots()
-            data['inserted'] = matplotlib.dates.date2num(data['inserted'])
-            ax1.plot_date(data['inserted'], data['mean_success_rate'], 'green')
+            data['start'] = matplotlib.dates.date2num(data['start'])
+            ax1.plot_date(data['start'], data['mean_success_rate'], 'green')
             ax1.set_xlabel('Date of session)')
             ax1.set_ylabel('Mean success rate', color='green')
             for tl in ax1.get_yticklabels():
                 tl.set_color('green')
             
-            
             ax2 = ax1.twinx()
-            ax2.plot_date(data['inserted'], data['mean_response_time'], 'red')
+            ax2.plot_date(data['start'], data['mean_response_time'], 'red')
             ax2.set_ylabel('Mean response time', color='red')
             plt.gca().invert_yaxis()
             for tl in ax2.get_yticklabels():
@@ -169,16 +158,3 @@ class Graph(Analysis,Drawer):
             fig.autofmt_xdate()
             plt.savefig(path, bbox_inches='tight') 
             plt.close()
-        
-    def avg_success(self,colour = "cyan",threshold=0,path=''):
-        if not path:
-            path = self.current_dir+'/graphs/avgsuccess.svg'
-        data = self._avg_success(threshold)
-        if not data.empty:
-            fig,ax = plt.subplots()
-            ax.set_ylabel(u"Priemerná rýchlosť odpovede")
-            ax.set_xlabel(u"Priemerná úspešnosť")
-            plt.plot(data['mean_success_rate'],data['mean_response_time'],marker="o",ls='',color=colour)
-
-            plt.savefig(path, bbox_inches='tight')       
-            plt.close()     

@@ -28,7 +28,7 @@ class Drawer():
     
     #0.35 is nice a hue limit, for length==4 you get green, yellow, orange and red, all easily distinguishable from each other
     @staticmethod
-    def colour_range(length,hue_limit=0.35):
+    def colour_range(length,hue_limit=0.32):
         colors = [Drawer.colour_value_hsv((hue_limit*x)/length) for x in range(length)]
         return colors
     
