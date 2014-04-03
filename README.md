@@ -8,7 +8,7 @@ mapViz is a Python tool for data analysis, map drawing and graph drawing. It use
 * Every classes' frame is customizable, so that you can create your own frame and pass it on to these classes to draw/do more analysis on them.
 
 ### Requirements
-All of the requirements are listed in requirements.txt. Some of them (namely [GDAL](http://www.gdal.org), [kartograph](http://kartograph.org/docs/kartograph.py/)) will probably not install automatically through pip. 
+All of the requirements are listed in requirements.txt. Some of them (namely [GDAL](https://pypi.python.org/pypi/GDAL/), [kartograph](http://kartograph.org/docs/kartograph.py/)) will probably not install automatically through pip. 
 
 You will also need the csv user data, csv with country codes (included in [/base/](../blob/master/base/areas.csv)) and shapefile data for map regions. These shapefiles are available on [Natural Earth Data](http://www.naturalearthdata.com/) (world map included in [/base/](../blob/master/base/ne_110m_admin_1_countries)).
 
