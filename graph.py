@@ -1,25 +1,34 @@
 # -*- coding: utf-8 -*-
 
-from analysis import *
-from drawer import Drawer
+import analysis
+from drawable import *
+
 import matplotlib.pyplot as plt
 import matplotlib
+from matplotlib.ticker import FuncFormatter 
 
-class Graph(Analysis,Drawer):
 
-    def __init__(self,path,df=None,codes=None,user=None,place_asked=None,response_time_threshold=60000,lower_bound = 50,upper_bound = 236,session_duration= np.timedelta64(30, 'm')):
-        Analysis.__init__(self,df,user,place_asked,response_time_threshold,lower_bound,upper_bound,session_duration)
-        Drawer.__init__(self,path,codes)
+class Graph(Drawable):
+    
+    """Sets matplotlib to be non-interactive and default font as Arial. All other defaults are same as in Drawable.
+    """
+    def __init__(self,path='',codes=None,df=None,user=None,place_asked=None,response_time_threshold=60000,lower_bound = 50,upper_bound = 236,session_duration= np.timedelta64(30, 'm'),add_session_numbers=True):
+        Drawable.__init__(self,path,codes,df,user,place_asked,response_time_threshold,lower_bound,upper_bound,session_duration,add_session_numbers)
 
         matplotlib.interactive(False)
-        matplotlib.rc('font', **{'sans-serif' : 'Arial','family' : 'sans-serif'}) #nice font that can display non-ascii characters
-        
-    '''weekdays bar plot
-    '''
+        matplotlib.rc('font', **{'sans-serif' : 'Arial','family' : 'sans-serif'}) #nice font
+
+
+    """Draws number of questions asked per weekday.
+    
+    width -- width of bars -- default is 0.35
+    colour -- colour of bars -- default is "b" (blue)
+    path -- output directory -- default is '' (current dir)
+    """
     def weekday_activity(self, width = 0.35, colour = "b",path=''):
         if not path:
-            path = self.current_dir+'/graphs/weekdayacivity.svg'
-        data = self._weekdays()
+            path = self.current_dir+'/graphs/weekdayactivity.svg'
+        data = analysis.weekdays(self.frame)
         if not data.empty:
             ind = np.arange(7)
             
@@ -32,11 +41,19 @@ class Graph(Analysis,Drawer):
             ax.set_xticklabels( (u"Monday", u"Tuesday", u"Wednesday", u"Thursday", u"Friday",u"Saturday",u"Sunday"))
     
             plt.savefig(path, bbox_inches='tight')
+            plt.close()
 
+
+    """Draws number of questions asked per hour.
+    
+    width -- width of bars -- default is 0.35
+    colour -- colour of bars -- default is "b" (blue)
+    path -- output directory -- default is '' (current dir)
+    """
     def hourly_activity(self, width = 0.35, colour = "b",path=''):
         if not path:
             path = self.current_dir+'/graphs/hourlyactivity.svg'
-        data = self._hours()
+        data = analysis.hours(self.frame)
         if not data.empty:
             ind = np.arange(24)
             
@@ -49,18 +66,24 @@ class Graph(Analysis,Drawer):
             ax.set_xticklabels(np.arange(24))
     
             plt.savefig(path, bbox_inches='tight')
+            plt.close()
+
+
+    """Draws graph of response time for time period.
     
-    '''draws inserted to response_time plot 
-    optional parameter wrongTimes - can be set to additional set of points to draw
-    for example right/wrong answers 
-    '''
+    log -- whether to draw normal response times or logarithmic response times -- default is True
+    right (True/False/None) -- draw (right/wrong/both) kinds of answers -- default is None
+    colour1 -- colour for right answers -- default is 'green'
+    colour2 -- colour for wrong answers-- default is 'red'
+    path -- output directory -- default is '' (current dir)
+    """
     def response_time_inserted(self,log=True, right=None, colour1 = 'green',colour2 = 'red',path=''):
         if not path:
             path = self.current_dir+'/graphs/responsetimeinserted.svg'
         if right is None:
-            input1 = self._response_time_inserted(True,log)
+            input1 = analysis.response_time_inserted(self.frame,True,log)
         else:
-            input1 = self._response_time_inserted(right,log)
+            input1 = analysis.response_time_inserted(self.frame,right,log)
         if not input1.empty:
             fig,ax = plt.subplots()
             if log:
@@ -77,7 +100,7 @@ class Graph(Analysis,Drawer):
                 plt.plot_date(input1['inserted'],input1['response_time'],color = colour1,marker='o',ls='')
             
             if right is None:
-                input2 = self._response_time_inserted(False,log)
+                input2 = analysis.response_time_inserted(self.frame,False,log)
                 if not input2.empty:
                     input2['inserted'] = matplotlib.dates.date2num(input2['inserted'])
                     if log:
@@ -89,30 +112,40 @@ class Graph(Analysis,Drawer):
             plt.savefig(path)
             plt.close()
     
-    '''bar plot of session length
-    '''
+
+    """Draws graph of lengths of sessions per session.
+    
+    width -- width of bars -- default is 0.4
+    colour -- colour of bars -- default is "cyan"
+    path -- -- default is '' (current_dir)
+    """
     def lengths_of_sessions(self, width = 0.4, colour = "cyan",path=''):
         if not path:
             path = self.current_dir+'/graphs/lenghtsofsessions.svg'
-        data = self._sessions_start_end()
+        data = analysis.lengths_of_sessions(self.frame,self.session_duration)
         if not data.empty:
             fig, ax = plt.subplots()
-            data['start'] = matplotlib.dates.date2num(data['start'])
-            data['end'] = matplotlib.dates.date2num(data['end'])
-
-            ax.bar(data['start'],data['end']-data['start'], color=colour)
-            ax.xaxis_date()
-
-            ax.set_ylabel(u"Length of session")
-            ax.set_xlabel(u"Date of session")
+            ax.bar(data.index,data.values,width, color=colour)
+    
+            ax.set_ylabel(u"Session length [seconds]")
+            ax.set_xlabel(u"Session number")
             ax.set_title(u"Lengths of sessions over time")
-
+            
             plt.savefig(path, bbox_inches='tight')
-        
-    def response_time_area(self,colour="cyan",threshold=5,path='',log=False):
+            plt.close()
+
+
+    """Draws graph of lengths of sessions per session.
+    
+    threshold -- number of points to annotate -- default is 0.4
+    colour -- colour of bars -- default is "cyan"
+    path -- -- default is '' (current_dir)
+    log -- whether to draw normal response times or logarithmic response times -- default is True
+    """
+    def response_time_area(self,colour="cyan",threshold=5,path='',log=True):
         if not path:
             path = self.current_dir+'/graphs/responsetimearea.svg'
-        data = self._response_time_place()
+        data = analysis.response_time_place(self.frame)
         if not data.empty:
             data = pd.DataFrame(data)
             data['area'] = self.codes['area']
@@ -135,26 +168,52 @@ class Graph(Analysis,Drawer):
             plt.savefig(path, bbox_inches='tight')  
             plt.close()  
 
-    def learning(self,path=None):
+
+    """Draws graph of mean success rate and mean response time per session.
+    
+    plot_date -- whether to draw dates or session numbers -- default is True
+    plot_response_time -- whether to draw response time plot -- default is True
+    invert_response_time -- whether to invert plot of response time --default is True
+    session_threshold -- how many sessions to draw -- default is None
+    path -- output directory -- default is '' (current_dir)
+    """
+    def learning(self,path='',plot_date=True,plot_response_time=True,invert_response_time=True,session_threshold=None):
         if not path:
             path = self.current_dir+'/graphs/learning.svg'
-        data = self._learning()
-        data = data.join(self._sessions_start_end())
+        data = analysis.add_session_numbers(self.frame,self.session_duration)
+        data = analysis.learning(data,self.session_duration,session_threshold)
+        if plot_date:
+            data = data.join(analysis.sessions_start_end(self.frame))
         if not data.empty:
+            
+            #setup mean_success_rate first
             fig, ax1 = plt.subplots()
-            data['start'] = matplotlib.dates.date2num(data['start'])
-            ax1.plot_date(data['start'], data['mean_success_rate'], 'green')
-            ax1.set_xlabel('Date of session)')
+            if plot_date:
+                data['start'] = matplotlib.dates.date2num(data['start'])
+                ax1.plot_date(data['start'], data['mean_success_rate'], 'green')
+                ax1.set_xlabel('Date of session')
+            else:
+                ax1.plot(data.index, data['mean_success_rate'], 'green')
+                ax1.set_xlabel('Session number')
+            
+            ax1.yaxis.set_major_formatter(FuncFormatter(lambda x,y: "%1.2f%%"%(100*x))) #sets y-axis to show percentages
             ax1.set_ylabel('Mean success rate', color='green')
+            ax1.set_title(u"Learning over time")
             for tl in ax1.get_yticklabels():
                 tl.set_color('green')
             
-            ax2 = ax1.twinx()
-            ax2.plot_date(data['start'], data['mean_response_time'], 'red')
-            ax2.set_ylabel('Mean response time', color='red')
-            plt.gca().invert_yaxis()
-            for tl in ax2.get_yticklabels():
-                tl.set_color('red')
-            fig.autofmt_xdate()
+            #setup mean_response_time
+            if plot_response_time:
+                ax2 = ax1.twinx()
+                if plot_date:
+                    ax2.plot_date(data['start'], data['mean_response_time'], 'red')
+                    fig.autofmt_xdate()
+                else:
+                    ax2.plot(data.index, data['mean_response_time'], 'red')
+                ax2.set_ylabel('Mean response time', color='red')
+                if invert_response_time:
+                    plt.gca().invert_yaxis()
+                for tl in ax2.get_yticklabels():
+                    tl.set_color('red')
             plt.savefig(path, bbox_inches='tight') 
             plt.close()
