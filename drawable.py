@@ -9,16 +9,17 @@ class Drawable():
     
     """Drawable object should have assigned path, codes and DataFrame. Can be created empty and then assigned by setters.
     
-    path -- default output directory
-    codes -- codes of countries defined by ISO_3166-1_alpha-2, also includes land area information -- default None
-    df -- dataframe to save -- default None
-    user -- filter by user id -- default None
-    place_asked -- filter by place_asked -- default None
-    response_time_threshold -- filter by response time less than threshold -- default 60000 (60 seconds)
-    lower_bound, upper_bound -- filter by countries in range (lower,upper) -- default is (50,236)
-    session_duration -- time difference between two answers in which the two are considered to be in the same session -- default 30 minutes
-    add_session_numbers -- whether to add new column with session numbers
+    :param path: default output directory
+    :param codes: codes of countries defined by ISO_3166-1_alpha-2, also includes land area information -- default None
+    :param df: dataframe to save -- default None
+    :param user: filter by user id -- default None
+    :param place_asked: filter by place_asked -- default None
+    :param response_time_threshold: filter by response time less than threshold -- default 60000 (60 seconds)
+    :param lower_bound, upper_bound: -- filter by countries in range (lower,upper) -- default is (50,236)
+    :param session_duration: time difference between two answers in which the two are considered to be in the same session -- default 30 minutes
+    :param add_session_numbers: whether to add new column with session numbers
     """
+
     def __init__(self,path='',codes=None,df=None,user=None,place_asked=None,response_time_threshold=60000,lower_bound = 50,upper_bound = 236,session_duration= np.timedelta64(30, 'm'),add_session_numbers=True):
         self.current_dir = path
         self.codes = codes

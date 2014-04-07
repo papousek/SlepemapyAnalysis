@@ -1,5 +1,5 @@
 ### About
-mapViz is a Python tool for data analysis, map drawing and graph drawing. It uses data obtained from users learning geography through interactive system available on slepemapy.cz. Each class has specific role:
+SlepemapyAnalysis is a Python tool for data analysis, map drawing and graph drawing. It uses data obtained from users learning geography through interactive system available on [Slepemapy](http://www.slepemapy.cz). Each class has specific role:
 
 * Importer is responsible for loading and parsing csv into pandas DataFrame
 * Analysis is used for general calculations on DataFrames, most of the methods return pandas Series objects
@@ -26,4 +26,4 @@ Map drawing phase:
 * m = Map(output\_path,csv,codes,**user=user_id**) #create map object
 * m.number\_of\_answers(binning\_function=**binning\_function**,number\_of\_bins=**5**)
 
-There are also few examples of usage for predefined maps and graphs included in main.py
+There are also few examples of usage for predefined maps and graphs included in main.py. If you want to know more read [documentation](../blob/master/documentation/html/index.html).

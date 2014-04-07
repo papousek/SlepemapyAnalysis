@@ -9,23 +9,25 @@ from matplotlib.ticker import FuncFormatter
 
 
 class Graph(Drawable):
-    
-    """Sets matplotlib to be non-interactive and default font as Arial. All other defaults are same as in Drawable.
-    """
-    def __init__(self,path='',codes=None,df=None,user=None,place_asked=None,response_time_threshold=60000,lower_bound = 50,upper_bound = 236,session_duration= np.timedelta64(30, 'm'),add_session_numbers=True):
+
+    def __init__(self,path='',codes=None,df=None,user=None,place_asked=None,response_time_threshold=60000,lower_bound = 50,upper_bound = 236,session_duration= np.timedelta64(30, 'm'),add_session_numbers=True):    
+        """Sets matplotlib to be non-interactive and default font as Arial. All other defaults are same as in Drawable.
+        """
+
         Drawable.__init__(self,path,codes,df,user,place_asked,response_time_threshold,lower_bound,upper_bound,session_duration,add_session_numbers)
 
         matplotlib.interactive(False)
         matplotlib.rc('font', **{'sans-serif' : 'Arial','family' : 'sans-serif'}) #nice font
 
 
-    """Draws number of questions asked per weekday.
-    
-    width -- width of bars -- default is 0.35
-    colour -- colour of bars -- default is "b" (blue)
-    path -- output directory -- default is '' (current dir)
-    """
     def weekday_activity(self, width = 0.35, colour = "b",path=''):
+        """Draws number of questions asked per weekday.
+        
+        :param width: width of bars -- default is 0.35
+        :param colour: colour of bars -- default is "b" (blue)
+        :param path: output directory -- default is '' (current dir)
+        """
+
         if not path:
             path = self.current_dir+'/graphs/weekdayactivity.svg'
         data = analysis.weekdays(self.frame)
@@ -44,13 +46,14 @@ class Graph(Drawable):
             plt.close()
 
 
-    """Draws number of questions asked per hour.
-    
-    width -- width of bars -- default is 0.35
-    colour -- colour of bars -- default is "b" (blue)
-    path -- output directory -- default is '' (current dir)
-    """
     def hourly_activity(self, width = 0.35, colour = "b",path=''):
+        """Draws number of questions asked per hour.
+        
+        :param width: width of bars -- default is 0.35
+        :param colour: colour of bars -- default is "b" (blue)
+        :param path: output directory -- default is '' (current dir)
+        """
+
         if not path:
             path = self.current_dir+'/graphs/hourlyactivity.svg'
         data = analysis.hours(self.frame)
@@ -69,15 +72,17 @@ class Graph(Drawable):
             plt.close()
 
 
-    """Draws graph of response time for time period.
-    
-    log -- whether to draw normal response times or logarithmic response times -- default is True
-    right (True/False/None) -- draw (right/wrong/both) kinds of answers -- default is None
-    colour1 -- colour for right answers -- default is 'green'
-    colour2 -- colour for wrong answers-- default is 'red'
-    path -- output directory -- default is '' (current dir)
-    """
     def response_time_inserted(self,log=True, right=None, colour1 = 'green',colour2 = 'red',path=''):
+        """Draws graph of response time for time period.
+        
+        :param log: whether to draw normal response times or logarithmic response times -- default is True
+        :param right: draw only right/wrong/both answers
+        :type right: True/False/None -- default is None
+        :param colour1: colour for right answers -- default is 'green'
+        :param colour2: colour for wrong answers-- default is 'red'
+        :param path: output directory -- default is '' (current dir)
+        """
+
         if not path:
             path = self.current_dir+'/graphs/responsetimeinserted.svg'
         if right is None:
@@ -112,14 +117,15 @@ class Graph(Drawable):
             plt.savefig(path)
             plt.close()
     
-
-    """Draws graph of lengths of sessions per session.
     
-    width -- width of bars -- default is 0.4
-    colour -- colour of bars -- default is "cyan"
-    path -- -- default is '' (current_dir)
-    """
     def lengths_of_sessions(self, width = 0.4, colour = "cyan",path=''):
+        """Draws graph of lengths of sessions per session.
+        
+        :param width: width of bars -- default is 0.4
+        :param colour: colour of bars -- default is "cyan"
+        :param path: -- default is '' (current_dir)
+        """
+
         if not path:
             path = self.current_dir+'/graphs/lenghtsofsessions.svg'
         data = analysis.lengths_of_sessions(self.frame,self.session_duration)
@@ -135,14 +141,15 @@ class Graph(Drawable):
             plt.close()
 
 
-    """Draws graph of lengths of sessions per session.
-    
-    threshold -- number of points to annotate -- default is 0.4
-    colour -- colour of bars -- default is "cyan"
-    path -- -- default is '' (current_dir)
-    log -- whether to draw normal response times or logarithmic response times -- default is True
-    """
     def response_time_area(self,colour="cyan",threshold=5,path='',log=True):
+        """Draws graph of lengths of sessions per session.
+        
+        :param threshold: number of points to annotate -- default is 0.4
+        :param colour: colour of bars -- default is "cyan"
+        :param path: -- default is '' (current_dir)
+        :param log: whether to draw normal response times or logarithmic response times -- default is True
+        """
+
         if not path:
             path = self.current_dir+'/graphs/responsetimearea.svg'
         data = analysis.response_time_place(self.frame)
@@ -169,15 +176,16 @@ class Graph(Drawable):
             plt.close()  
 
 
-    """Draws graph of mean success rate and mean response time per session.
-    
-    plot_date -- whether to draw dates or session numbers -- default is True
-    plot_response_time -- whether to draw response time plot -- default is True
-    invert_response_time -- whether to invert plot of response time --default is True
-    session_threshold -- how many sessions to draw -- default is None
-    path -- output directory -- default is '' (current_dir)
-    """
     def learning(self,path='',plot_date=True,plot_response_time=True,invert_response_time=True,session_threshold=None):
+        """Draws graph of mean success rate and mean response time per session.
+        
+        :param plot_date: whether to draw dates or session numbers -- default is True
+        :param plot_response_time: whether to draw response time plot -- default is True
+        :param invert_response_time: whether to invert plot of response time --default is True
+        :param session_threshold: how many sessions to draw -- default is None
+        :param path: output directory -- default is '' (current_dir)
+        """
+
         if not path:
             path = self.current_dir+'/graphs/learning.svg'
         data = analysis.learning(self.frame,self.session_duration,session_threshold)

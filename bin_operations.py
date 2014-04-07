@@ -14,23 +14,29 @@ import sys
 
 
 
-"""Returns string in format 'rgb(r,g,b)'.
-"""
 def colour_value_rgb_string(r,g,b):
+    
+    """Returns string in format 'rgb(r,g,b)'.
+    """
+
     return '\'rgb('+str(int(255*r))+', '+str(int(255*g))+', '+str(int(255*b))+')\''
 
-"""Returns colour rgb value for hsv.
-"""
+
 def colour_value_hsv(h,s=1,v=1):
+    """Returns colour rgb value for hsv.
+    """
+
     colours = colorsys.hsv_to_rgb(h,s,v)
     return [colours[0],colours[1],colours[2]]
 
-"""Generates range of colours.
 
-length -- how many colours to generate
-hue_limit -- limits the hue value -- default 0.32
-"""
 def colour_range(length,hue_limit=0.32):
+    """Generates range of colours.
+
+    :param length: how many colours to generate
+    :param hue_limit: limits the hue value -- default 0.32
+    """
+
     colors = [colour_value_hsv((hue_limit*x)/length) for x in range(length)]
     return colors
     
@@ -38,43 +44,50 @@ def colour_range(length,hue_limit=0.32):
 ################################################################################
 
 
-"""recursive helper function of nested-means
-"""
 def _nested_means_classification(data,num):
+    """recursive helper function of nested-means
+    """
+
     if num<=0 or data.empty:
         return []
     mean = data.mean()
     return [mean]+_nested_means_classification(data[data<mean],num-1)+_nested_means_classification(data[data>=mean],num-1)
 
-"""Data is divided by nested-means.
 
-data -- values to bin
-classes -- divide values into this many bins, should be a power of 2
-"""
 def nested_means_classification(data,classes=8):
+    """Data is divided by nested-means.
+
+    :param data: values to bin
+    :param classes: divide values into this many bins, should be a power of 2
+    """
+
     if len(data)<classes:
         return [data.min()-1,data.max()+1]
     breaks = [data.min()-1,data.max()+1]+_nested_means_classification(data,np.log2(classes))
     breaks.sort()
     return breaks
 
-"""Data is divided by equally distant ranges.
 
-data -- values to bin
-classes -- divide values into this many bins
-"""
 def equidistant_classification(data,classes=8):
+    """Data is divided by equally distant ranges.
+
+    :param data: values to bin
+    :param classes: divide values into this many bins
+    """
+
     x = (data.max() - data.min())/classes
     breaks = [data.min()-1,data.max()+1]+[i*x for i in range(1,classes)]
     breaks.sort()
     return breaks
 
-"""Data is divided by jenks algorithm.
 
-data -- values to bin
-classes -- divide values into this many bins
-"""
-def jenks_classification(data, classes=8) :
+def jenks_classification(data, classes=8):
+    """Data is divided by jenks algorithm.
+
+    :param data: values to bin
+    :param classes: divide values into this many bins
+    """
+
     input = data.copy()
     input.sort()
     input = input.tolist()
@@ -129,15 +142,16 @@ def jenks_classification(data, classes=8) :
 ################################################################################
 
 
-"""Combines classification methods with colouring, returns binned data with assigned colours
-
-data -- values to bin
-binning_function -- which function to use for binning -- default is None (-> jenks_classification)
-number_of_bins -- how many bins to divide data-- default is 8
-additional_countries -- whether to add additional countries AFTER binning -- default is None
-additional_labels -- whether to add additional labels AFTER calculations -- default is []
-"""
 def bin_data(data,binning_function=None,number_of_bins=8,additional_countries=None,additional_labels=[]):
+    """Combines classification methods with colouring, returns binned data with assigned colours
+
+    :param data: values to bin
+    :param binning_function: which function to use for binning -- default is None (-> jenks_classification)
+    :param number_of_bins: how many bins to divide data-- default is 8
+    :param additional_countries: whether to add additional countries AFTER binning -- default is None
+    :param additional_labels: whether to add additional labels AFTER calculations -- default is []
+    """
+
     if binning_function is None:
         binning_function = jenks_classification
     binned = pd.DataFrame(data)
@@ -163,11 +177,12 @@ def bin_data(data,binning_function=None,number_of_bins=8,additional_countries=No
     return (binned,colours)
 
 
-""" Returns list of strings from the bins in the interval form: (lower,upper]
-
-bins -- bins to get strings from
-"""
 def bins_to_string(bins):
+    """ Returns list of strings from the bins in the interval form: (lower,upper]
+
+    :param bins: bins to get strings from
+    """
+
     bins[0]+=1 #corrections for bins
     bins[-1]-=1
     bins = [round(x,2) for x in bins]

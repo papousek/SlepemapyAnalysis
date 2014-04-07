@@ -5,29 +5,32 @@ import numpy as np
 import datetime
 
 
-"""Assignes session number to every answer.
-
-session_duration -- duration of one session
-"""
 
 def add_session_numbers(frame,session_duration):
+    """Assignes session number to every answer.
+
+    :param session_duration: duration of one session
+    """
+
     result = frame.sort(['inserted'])
     result['session_number'] = (result['inserted'] - result['inserted'].shift(1) > session_duration).fillna(1).cumsum() #adds session numbers to every row
     return result
 
 
-"""Calculates session lengths in seconds.
-"""
 def get_session_lengths(frame):
+    """Calculates session lengths in seconds.
+    """
+
     group = frame.groupby('session_number')
     start = group.first()['inserted']
     end = group.last()['inserted']
     return (end-start)/np.timedelta64(1,'s')
 
 
-"""Returns session's start and end for every session.
-"""
 def sessions_start_end(frame):
+    """Returns session's start and end for every session.
+    """
+
     result = pd.DataFrame()
     group = frame.groupby('session_number')
     result['start'] = group.first()['inserted']
@@ -35,35 +38,40 @@ def sessions_start_end(frame):
     return result
 
 
-"""Returns first questions for every session.
-"""
 def first_questions(frame):
+    """Returns first questions for every session.
+    """
+
     return frame.groupby('session_number').apply(lambda x: x.drop_duplicates(cols=['place_asked']))
 
 
-"""Returns counts of answers per weekdays (first value is Monday etc)
-"""
 def weekdays(frame):
+    """Returns counts of answers per weekdays (first value is Monday etc)
+    """
+
     data = pd.DataFrame()
     data['weekday'] = pd.DatetimeIndex(frame.inserted).weekday
     counts = pd.DataFrame(np.arange(7)*0)
     return (counts[0]+data.weekday.value_counts()).fillna(0)
 
 
-"""Returns counts of answers per hour
-"""
 def hours(frame):
+    """Returns counts of answers per hour
+    """
+
     data = pd.DataFrame()
     data['hour'] = pd.DatetimeIndex(frame.inserted).hour
     counts = pd.DataFrame(np.arange(24)*0)
     return (counts[0]+data.hour.value_counts()).fillna(0)
 
 
-"""Returns numbers of answers per country.
-
-right (True/False/None) -- filter only right/wrong/both answers -- default is None
-"""
 def number_of_answers(frame,right=None):
+    """Returns numbers of answers per country.
+
+    :param right: filter only right/wrong/both answers
+    :type right: True/False/None -- default is None
+    """
+
     answers = frame
     if right:
         answers = frame[frame.place_asked==frame.place_answered]
@@ -72,11 +80,13 @@ def number_of_answers(frame,right=None):
     return answers['place_asked'].value_counts()
 
 
-"""Returns dataframe of mean response times per country.
-
-right (True/False/None) -- filter only right/wrong/both answers -- default is None
-"""
 def response_time_place(frame, right=None):
+    """Returns dataframe of mean response times per country.
+    
+    :param right: filter only right/wrong/both answers
+    :type right: True/False/None -- default is None
+    """
+
     answers = frame
     if right:
         answers = answers[answers.place_asked==answers.place_answered]
@@ -86,12 +96,14 @@ def response_time_place(frame, right=None):
     return answers['response_time'].mean()
 
 
-"""Returns dataframe of response times, inserted.
-
-right (True/False/None) -- filter only right/wrong/both answers -- default is None
-log -- whether to return normal response times or logarithmic response times -- default is True
-"""
 def response_time_inserted(frame,right=None,log=True):
+    """Returns dataframe of response times, inserted.
+    
+    :param right: filter only right/wrong/both answers
+    :type right: True/False/None -- default is None
+    :param log: whether to return normal response times or logarithmic response times -- default is True
+    """
+
     answers = frame
     if right:
         answers = answers[answers.place_asked==answers.place_answered]
@@ -103,19 +115,21 @@ def response_time_inserted(frame,right=None,log=True):
         return answers[['inserted','response_time']]
 
 
-"""Returns counts of countries that are most mistaken for this country.
-
-threshold -- only return top counts -- default is None (which means return all)
-"""
 def mistaken_countries(frame,threshold=None):
+    """Returns counts of countries that are most mistaken for this country.
+
+    :param threshold: only return top counts -- default is None (which means return all)
+    """
+
     wrong_answers = frame[frame.place_asked!=frame.place_answered]
     wrong_answers = wrong_answers['place_answered'].value_counts()
     return wrong_answers[:threshold]
 
 
-"""Returns mean_success_rate for each country
-"""
 def mean_success_rate(frame):
+    """Returns mean_success_rate for each country
+    """
+
     result = pd.DataFrame()
     groups = frame.groupby('place_asked')
     result['mean_success_rate'] = groups.apply(lambda x: len(x[x.place_asked==x.place_answered])/float(len(x))*100)
@@ -123,11 +137,12 @@ def mean_success_rate(frame):
     return result.dropna()
 
 
-"""Returns length of each session.
-
-session_duration -- duration of one session
-"""
 def lengths_of_sessions(frame,session_duration):
+    """Returns length of each session.
+
+    :param session_duration: duration of one session
+    """
+
     if len(frame.groupby('user'))==1:
         groups = get_session_lengths(frame)
     else:
@@ -139,11 +154,12 @@ def lengths_of_sessions(frame,session_duration):
     return groups.apply(lambda x: x.inserted.sum()/maximum)
 
 
-"""Returns progress of mean_success_rate and mean_response_time over sessions.
-
-session_threshold -- consider only this many sessions
-"""
 def learning(frame,session_duration,session_threshold=None):
+    """Returns progress of mean_success_rate and mean_response_time over sessions.
+
+    :param session_threshold: consider only this many sessions
+    """
+
     first = first_questions(frame)
     
     rates = [] #collects already calculated rates

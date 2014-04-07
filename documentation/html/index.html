@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>About &mdash; SlepemapyAnalysis 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SlepemapyAnalysis 0.9 documentation" href="#" />
+    <link rel="next" title="SlepemapyAnalysis.importer module" href="SlepemapyAnalysis.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="SlepemapyAnalysis.html" title="SlepemapyAnalysis.importer module"
+             accesskey="N">next</a> |</li>
+        <li><a href="#">SlepemapyAnalysis 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="about">
+<h1>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h1>
+<p>SlepemapyAnalysis is a Python tool for data analysis, map drawing and
+graph drawing. It uses data obtained from users learning geography
+through interactive system available on <a class="reference external" href="http://www.slepemapy.cz">Slepemapy</a>. Each class has
+specific role:</p>
+<ul class="simple">
+<li>Importer is responsible for loading and parsing csv into pandas
+DataFrame</li>
+<li>Analysis is used for general calculations on DataFrames, most of the
+methods return pandas Series objects</li>
+<li>Map is responsible for drawing choropleth maps in .svg format through
+kartograph. It has separate methods for drawing, legend, title,
+classification methods etc.</li>
+<li>Graph class is used for drawing graphs</li>
+<li>Every classes’ frame is customizable, so that you can create your own
+frame and pass it on to these classes to draw/do more analysis on
+them.</li>
+</ul>
+</div>
+<div class="section" id="requirements">
+<h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h1>
+<p>All of the requirements are listed in requirements.txt. Some of them
+(namely <a class="reference external" href="https://pypi.python.org/pypi/GDAL/">GDAL</a>, <a class="reference external" href="http://kartograph.org/docs/kartograph.py/">kartograph</a>) will probably not install automatically
+through pip.</p>
+<p>You will also need the csv user data, csv with country codes (included
+in <a class="reference external" href="../blob/master/base/areas.csv">/base/</a>) and shapefile data for map regions. These shapefiles are
+available on <a class="reference external" href="http://www.naturalearthdata.com/">Natural Earth Data</a> (world map included in
+<a class="reference external" href="../blob/master/base/ne_110m_admin_1_countries">/base/</a>).</p>
+</div>
+<div class="section" id="usage-example">
+<h1>Usage example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h1>
+<p>I want to draw a map for specific user_id with my own binning_function
+and my own number of bins (5)</p>
+<p>Parsing phase:</p>
+<ul class="simple">
+<li>input = Importer()</li>
+<li>codes = input.load_general_csv(path_to_areas_csv)</li>
+<li>csv = input.load_geo_csv(path_to_user_data_csv)</li>
+</ul>
+<p>Map drawing phase:</p>
+<ul class="simple">
+<li>m = Map(output_path,csv,codes,<strong>user=user_id</strong>) #create map
+object</li>
+<li>m.number_of_answers(binning_function=<strong>binning_function</strong>,number_of_bins=<strong>5</strong>)</li>
+</ul>
+<p>There are also few examples of usage for predefined maps and graphs
+included in main.py</p>
+<div class="section" id="slepemapyanalysis-s-documentation">
+<h2>SlepemapyAnalysis&#8217;s documentation!<a class="headerlink" href="#slepemapyanalysis-s-documentation" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="SlepemapyAnalysis.html">SlepemapyAnalysis.importer module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SlepemapyAnalysis.html#module-SlepemapyAnalysis.analysis">SlepemapyAnalysis.analysis module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SlepemapyAnalysis.html#module-SlepemapyAnalysis.drawable">SlepemapyAnalysis.drawable module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SlepemapyAnalysis.html#module-SlepemapyAnalysis.graph">SlepemapyAnalysis.graph module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SlepemapyAnalysis.html#module-SlepemapyAnalysis.map">SlepemapyAnalysis.map module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SlepemapyAnalysis.html#module-SlepemapyAnalysis.bin_operations">SlepemapyAnalysis.bin_operations module</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">About</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#usage-example">Usage example</a><ul>
+<li><a class="reference internal" href="#slepemapyanalysis-s-documentation">SlepemapyAnalysis&#8217;s documentation!</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="SlepemapyAnalysis.html"
+                        title="next chapter">SlepemapyAnalysis.importer module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="SlepemapyAnalysis.html" title="SlepemapyAnalysis.importer module"
+             >next</a> |</li>
+        <li><a href="#">SlepemapyAnalysis 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Dionyz Lazar.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
