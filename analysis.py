@@ -128,7 +128,10 @@ def mean_success_rate(frame):
 session_duration -- duration of one session
 """
 def lengths_of_sessions(frame,session_duration):
-    groups = frame.groupby('user').apply(get_session_lengths)
+    if len(frame.groupby('user'))==1:
+        groups = get_session_lengths(frame)
+    else:
+        groups = frame.groupby('user').apply(get_session_lengths)
     groups = groups.reset_index()
 
     maximum = groups.session_number.value_counts().max()

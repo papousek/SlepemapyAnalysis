@@ -180,8 +180,7 @@ class Graph(Drawable):
     def learning(self,path='',plot_date=True,plot_response_time=True,invert_response_time=True,session_threshold=None):
         if not path:
             path = self.current_dir+'/graphs/learning.svg'
-        data = analysis.add_session_numbers(self.frame,self.session_duration)
-        data = analysis.learning(data,self.session_duration,session_threshold)
+        data = analysis.learning(self.frame,self.session_duration,session_threshold)
         if plot_date:
             data = data.join(analysis.sessions_start_end(self.frame))
         if not data.empty:

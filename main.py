@@ -13,11 +13,12 @@ csv = importer.load_geo_csv(current_path+"/base/large.csv")
 m = Map(current_path,codes,csv,user=10)
 g = Graph(current_path,codes,csv,user=10)
 am = Map(current_path,codes,csv)
-ag = Graph(current_path,codes,csv,add_session_numbers=False)
+ag = Graph(current_path,codes,csv,add_session_numbers=True)
 
 
-#g.lengths_of_sessions()
+g.lengths_of_sessions()
 g.learning()
+g.response_time_inserted()
 
 ag.weekday_activity()
 ag.hourly_activity()
