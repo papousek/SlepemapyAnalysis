@@ -10,7 +10,7 @@ SlepemapyAnalysis is a Python tool for data analysis, map drawing and graph draw
 ### Requirements
 All of the requirements are listed in requirements.txt. Some of them (namely [GDAL](https://pypi.python.org/pypi/GDAL/), [kartograph](http://kartograph.org/docs/kartograph.py/)) will probably not install automatically through pip. 
 
-You will also need the csv user data, csv with country codes (included in [/base/](../blob/master/base/areas.csv)) and shapefile data for map regions. These shapefiles are available on [Natural Earth Data](http://www.naturalearthdata.com/) (world map included in [/base/](../blob/master/base/ne_110m_admin_1_countries)).
+You will also need the csv user data, csv with country codes (included in [/base/](../master/base/areas.csv)) and shapefile data for map regions. These shapefiles are available on [Natural Earth Data](http://www.naturalearthdata.com/) (world map included in [/base/](../master/base/ne_110m_admin_1_countries)).
 
 ### Usage example
 I want to draw a map for specific user\_id with my own binning\_function and my own number of bins (5)
@@ -26,4 +26,4 @@ Map drawing phase:
 * m = Map(output\_path,csv,codes,**user=user_id**) #create map object
 * m.number\_of\_answers(binning\_function=**binning\_function**,number\_of\_bins=**5**)
 
-There are also few examples of usage for predefined maps and graphs included in main.py. If you want to know more read [documentation](../blob/master/documentation/html/index.html).
+There are also few examples of usage for predefined maps and graphs included in main.py. If you want to know more read [documentation](../master/documentation/html/index.html).
