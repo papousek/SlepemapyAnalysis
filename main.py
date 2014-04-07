@@ -16,7 +16,7 @@ am = Map(current_path,codes,csv)
 ag = Graph(current_path,codes,csv,add_session_numbers=False)
 
 
-"""g.lengths_of_sessions()
+#g.lengths_of_sessions()
 g.learning()
 
 ag.weekday_activity()
@@ -27,7 +27,7 @@ ag.response_time_area()
 m.mistaken_countries()
 am.number_of_answers()
 am.response_time()
-am.avg_success()"""
+am.mean_success_rate()
 
 
 
