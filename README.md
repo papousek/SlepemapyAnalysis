@@ -25,4 +25,4 @@ python graphs-user.py -i 10 25 2277 96 156
 Those generators expect you have: geography.answer.csv, [geography.places.csv](../master/geography.places.csv), [difficulties.yaml](../master/difficuties.yaml)
 
 
-# For much more customization and analysis read the [documentation](../master/documentation/html/index.html)
+### For much more customization and analysis read the [documentation](../master/documentation/html/index.html)
