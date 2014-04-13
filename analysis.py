@@ -188,7 +188,7 @@ def mean_success(frame):
     return groups.dropna()
 
 
-def number_of_answers_session(frame,threshold=15):
+def number_of_answers_session(frame,threshold=None):
     """Returns number of answers for each session.
     """
     
@@ -203,7 +203,7 @@ def number_of_answers_session(frame,threshold=15):
     return groups.astype(np.int32)
 
 
-def lengths_of_sessions(frame,threshold=15):
+def lengths_of_sessions(frame,threshold=None):
     """Returns length of each session.
 
     """
@@ -220,7 +220,7 @@ def lengths_of_sessions(frame,threshold=15):
     return groups
 
 
-def mean_response_session(frame,session_threshold=15):
+def mean_response_session(frame,session_threshold=None):
     """Returns progress of mean_success_rate and mean_response_time over sessions.
 
     :param session_threshold: consider only this many sessions
@@ -240,7 +240,7 @@ def mean_response_session(frame,session_threshold=15):
     return pd.Series(times)
 
 
-def mean_success_session(frame,session_threshold=15):
+def mean_success_session(frame,session_threshold=None):
     """Returns progress of mean_success_rate and mean_response_time over sessions.
 
     :param session_threshold: consider only this many sessions
@@ -260,7 +260,7 @@ def mean_success_session(frame,session_threshold=15):
     return pd.Series(rates)
 
 
-def mean_skill_session(frame, difficulties,threshold=15):
+def mean_skill_session(frame, difficulties,threshold=None):
     """Returns progress of mean user skill over sessions.
     there are probably better ways to implements this, dgaf now
     """

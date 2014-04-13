@@ -107,7 +107,7 @@ class Graph(Drawable):
             plt.close()  
     
     
-    def lengths_of_sessions(self, path='',threshold=15):
+    def lengths_of_sessions(self, path='',threshold=None):
         """Draws graph of lengths of sessions per session.
         
         :param threshold: how many sessions to plot (globally there are 50+ sessions, but most of the people stay for 10+-)
@@ -135,7 +135,7 @@ class Graph(Drawable):
             plt.close()
 
     
-    def number_of_answers(self, path='',threshold=15):
+    def number_of_answers(self, path='',threshold=None):
         """Draws graph of number of answers per session.
         
         :param threshold: how many sessions to plot (globally there are 50+ sessions, but most of the people stay for 10+-)
@@ -163,7 +163,7 @@ class Graph(Drawable):
             plt.close()
     
     
-    def success(self,path='',threshold=15):
+    def success(self,path='',threshold=None):
         """Draws graph of mean success and mean response per session.
         
         :param threshold: how many sessions to draw -- default is 10
@@ -195,7 +195,7 @@ class Graph(Drawable):
             plt.close()
     
     
-    def skill(self, path='', threshold=15):
+    def skill(self, path='', threshold=None):
         """Draws graph of mean skill and mean response time per session.
 
         :param threshold: how many sessions to draw -- default is 10
