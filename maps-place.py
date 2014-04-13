@@ -22,10 +22,10 @@ codes = inputoutput.load_general_csv(path=working_directory+'/geography.place.cs
 
 for item in args.items:
     m = Map(path=working_directory, codes=codes, df=frame, place_asked=int(item))
-    
+
     directory = working_directory+'/maps/place/'+item+'/'
     if not path.exists(directory):
         makedirs(directory)
-        
-    print 'Generating maps for place',item    
+
+    print 'Generating maps for place',item
     m.mistaken_countries(path=directory)

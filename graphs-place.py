@@ -22,11 +22,11 @@ diff = inputoutput.load_difficulties(path=working_directory+'/difficulties.yaml'
 
 for item in args.items:
     g = Graph(path, difficulties = diff, df = frame, place_asked=int(item))
-    
+
     directory = working_directory+'/graphs/place/'+item+'/'
     if not path.exists(directory):
         makedirs(directory)
-        
-    print 'Generating graphs for place',item    
+
+    print 'Generating graphs for place',item
     g.success(path=directory)
     g.skill(path=directory)

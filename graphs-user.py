@@ -22,12 +22,12 @@ diff = inputoutput.load_difficulties(path=working_directory+'/difficulties.yaml'
 
 for item in args.items:
     g = Graph(path, difficulties = diff, df = frame, user=int(item))
-    
+
     directory = working_directory+'/graphs/user/'+item+'/'
     if not path.exists(directory):
         makedirs(directory)
-        
-    print 'Generating graphs for user',item    
+
+    print 'Generating graphs for user',item
     g.success(path=directory)
     g.skill(path=directory)
     g.number_of_answers(path=directory)

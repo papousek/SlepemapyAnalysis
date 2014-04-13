@@ -25,8 +25,8 @@ m = Map(path=working_directory, codes=codes, difficulties=diff, df=frame)
 directory = working_directory+'/maps/global/'
 if not path.exists(directory):
     makedirs(directory)
-    
-print 'Generating global maps'  
+
+print 'Generating global maps'
 m.difficulty(path=directory)
 m.success(path=directory)
 m.number_of_answers(path=directory)

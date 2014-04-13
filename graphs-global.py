@@ -24,7 +24,7 @@ g = Graph(path, difficulties = diff, df = frame)
 directory = working_directory+'/graphs/global/'+item+'/'
 if not path.exists(directory):
     makedirs(directory)
-    
+
 print 'Generating global graphs'
 g.success(path=directory)
 g.skill(path=directory)

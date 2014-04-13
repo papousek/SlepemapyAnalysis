@@ -42,24 +42,24 @@ def _logis(value):
 
 def elo(answer, prior_skill, user_number_of_answers, difficulty, place_number_of_answers):
     """Modified implementation of elo from https://github.com/proso/geography/blob/master/main/geography/models/prior.py
-    
+
     ELO model that returns updated values of country's difficulty and user's skill
-    
+
     :param answer: answer has columns place_asked,place_answered,number_of_options
     :param prior_skill: score of a user
     :param user_number_of_answers: number of answers user has for this country
-    :param difficulty: score of a country 
+    :param difficulty: score of a country
     :param place_number_of_answers: number of answers country has
-    """    
-    
+    """
+
     if answer['number_of_options']:
         guess = 1.0/answer['number_of_options']
     else:
         guess = 0
     prediction = guess + (1-guess) * _logis(prior_skill-difficulty)
     result = answer['place_asked'] == answer['place_answered']
-    
-    k_func = lambda x: 1.0/(1+0.05*x)    
+
+    k_func = lambda x: 1.0/(1+0.05*x)
     k1 = k_func(user_number_of_answers)
     k2 = k_func(place_number_of_answers)
 
@@ -70,49 +70,49 @@ def elo(answer, prior_skill, user_number_of_answers, difficulty, place_number_of
 def get_difficulties(frame, path = ''):
     """Helper function to calculate difficulties for every country.
     """
-    
+
     first = first_questions(frame.groupby(['user','session_number']))
     first = first.set_index('user')
-    
+
     places = defaultdict(inputoutput.defaultdict_factory)
     users  = defaultdict(inputoutput.defaultdict_factory)
-    
+
     for row in first.iterrows():
         answer_user = row[0]
         answer_place = row[1]['place_asked']
-        
+
         user = users[(answer_user,answer_place)]
         place = places[answer_place]
         update = elo(row[1],user[0],user[1],place[0],place[1])
-        
+
         users[(answer_user,answer_place)] = [update[0],user[1]+1]
         places[answer_place] = [update[1],place[1]+1]
-    
+
     if path:
         inputoutput.save_difficulties(places,path)
     return places
-    
+
 
 def difficulty_probabilities(difficulties):
     """Returns predicted probabilities of success for average user.
     """
-    
+
     result = []
     for item in difficulties.iteritems():
         result += [_logis(-item[1][0])]
     return pd.Series(result,index=difficulties.keys())
-    
+
 
 def success_probabilities(skills,difficulties):
     """User-specific probabilities of success.
     """
-    
+
     result = []
     for item in skills.iteritems():
         result += [_logis(item[1][0] - difficulties[item[0]][0])]
     result = pd.Series(result,index=skills.keys())
     return result
-    
+
 
 ################################################################################
 
@@ -154,7 +154,7 @@ def number_of_answers(frame,right=None):
 
 def response_time(frame, right=None):
     """Returns dataframe of mean response times per country.
-    
+
     :param right: filter only right/wrong/both answers
     :type right: True/False/None -- default is None
     """
@@ -165,7 +165,7 @@ def response_time(frame, right=None):
     elif right == False:
         answers = answers[answers.place_asked!=answers.place_answered]
     answers = answers.groupby('place_asked')
-    return answers['response_time'].mean()        
+    return answers['response_time'].mean()
 
 
 def mistaken_countries(frame, threshold=None):
@@ -191,7 +191,7 @@ def mean_success(frame):
 def number_of_answers_session(frame,threshold=15):
     """Returns number of answers for each session.
     """
-    
+
     """Returns length of each session.
 
     :param threshold: maximum number of sessions to return
@@ -264,12 +264,12 @@ def mean_skill_session(frame, difficulties,threshold=15):
     """Returns progress of mean user skill over sessions.
     there are probably better ways to implements this, dgaf now
     """
-    
+
     first = first_questions(frame.groupby(['session_number']))
     first = first.set_index('user')
     result = []
     skills = defaultdict(inputoutput.defaultdict_factory)
-    
+
     if threshold is None:
         limit = first.session_number.max()+1
     else:
@@ -279,12 +279,12 @@ def mean_skill_session(frame, difficulties,threshold=15):
         temp = first[first.session_number==i]
         for row in temp.iterrows():
             answer_user = row[0]
-            answer_place = row[1]['place_asked']            
+            answer_place = row[1]['place_asked']
             user = skills[answer_place]
             place = difficulties[answer_place]
 
             update = elo(row[1],user[0],user[1],place[0],place[1])
             skills[answer_place] = (update[0],user[1]+1)
-    
+
         result += [success_probabilities(skills,difficulties).mean()]
     return (pd.Series(result),skills)

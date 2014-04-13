@@ -15,7 +15,7 @@ except IOError: #script is ran for the first time so we have to generate global 
     am = Map(current_path,codes,None,csv,session_numbers=True)
     difficulties = analysis.get_difficulties(am.frame,current_path+'/difficulties.yaml')
     am.set_difficulties(difficulties)
-    
+
 g = Graph(current_path, codes, difficulties,csv, user=10)
 '''
 m = Map(current_path, codes, difficulties, csv, place_asked=150)
