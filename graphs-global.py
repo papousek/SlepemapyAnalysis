@@ -21,7 +21,7 @@ diff = inputoutput.load_difficulties(path=working_directory+'/difficulties.yaml'
 
 g = Graph(path, difficulties = diff, df = frame)
 
-directory = working_directory+'/graphs/global/'+item+'/'
+directory = working_directory+'/graphs/global/'
 if not path.exists(directory):
     makedirs(directory)
     
