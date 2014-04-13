@@ -30,7 +30,7 @@ class Graph(Drawable):
         """
 
         if not path:
-            path = self.current_dir+'/graphs/weekdayactivity.svg'
+            path = self.current_dir+'/graphs/'
         data = analysis.weekdays(self.frame)
         if not data.empty:
             ind = arange(7)
@@ -43,7 +43,7 @@ class Graph(Drawable):
             ax.set_title(u"Number of questions per weekday")
             ax.set_xticklabels( (u"Monday", u"Tuesday", u"Wednesday", u"Thursday", u"Friday",u"Saturday",u"Sunday"))
     
-            plt.savefig(path, bbox_inches='tight')
+            plt.savefig(path+'weekday_activity.svg', bbox_inches='tight')
             plt.close()
 
 
@@ -54,7 +54,7 @@ class Graph(Drawable):
         """
 
         if not path:
-            path = self.current_dir+'/graphs/hourlyactivity.svg'
+            path = self.current_dir+'/graphs/'
         data = analysis.hours(self.frame)
         if not data.empty:
             ind = arange(24)
@@ -66,9 +66,9 @@ class Graph(Drawable):
             
             ax.set_ylabel(u"Number of questions")
             ax.set_title(u"Number of questions per hour")
-            ax.set_xticklabels(arange(24))
+            ax.set_xticklabels(ind)
     
-            plt.savefig(path, bbox_inches='tight')
+            plt.savefig(path+'hourly_activity.svg', bbox_inches='tight')
             plt.close()
     
     
@@ -81,8 +81,8 @@ class Graph(Drawable):
         """
 
         if not path:
-            path = self.current_dir+'/graphs/responsetimearea.svg'
-        data = analysis.response_time_place(self.frame)
+            path = self.current_dir+'/graphs/'
+        data = analysis.response_time(self.frame)
 
         if not data.empty:
             areas = []
@@ -103,7 +103,7 @@ class Graph(Drawable):
             for i in range(threshold):
                 ax.annotate(self.get_country_name(data.index[i]),(data[i],areas[i]))
                 ax.annotate(self.get_country_name(data.index[i]),(data[-i],areas[-i]))'''
-            plt.savefig(path, bbox_inches='tight')  
+            plt.savefig(path+'response_time_area.svg', bbox_inches='tight')  
             plt.close()  
     
     
@@ -115,17 +115,23 @@ class Graph(Drawable):
         """
 
         if not path:
-            path = self.current_dir+'/graphs/lenghtsofsessions.svg'
+            path = self.current_dir+'/graphs/'
         data = analysis.lengths_of_sessions(self.frame)
         if not data.empty:
             fig, ax = plt.subplots()
+            ind = arange(len(data.index))
+            width=0.4
+            
             ax.bar(data.index,data.values,width=0.4, color="cyan")
     
+            ax.set_xticklabels(ind)
+            ax.set_xticks(ind+width)
+            
             ax.set_ylabel(u"Session length [seconds]")
             ax.set_xlabel(u"Session number")
             ax.set_title(u"Lengths of sessions over time")
             
-            plt.savefig(path, bbox_inches='tight')
+            plt.savefig(path+'lenghts_of_sessions.svg', bbox_inches='tight')
             plt.close()
 
     
@@ -137,93 +143,85 @@ class Graph(Drawable):
         """
 
         if not path:
-            path = self.current_dir+'/graphs/numberofanswers.svg'
+            path = self.current_dir+'/graphs/'
         data = analysis.number_of_answers_session(self.frame,threshold)
         if not data.empty:
             fig, ax = plt.subplots()
-            ax.bar(data.index,data.values,width=0.4, color="cyan")
+            ind = arange(len(data.index))
+            width=0.4
+            
+            ax.bar(ind+width/2,data.values,width=width, color="cyan")
     
+            ax.set_xticklabels(ind)
+            ax.set_xticks(ind+width)
+            
             ax.set_ylabel(u"Mean number of questions")
             ax.set_xlabel(u"Session number")
             ax.set_title(u"Number of questions over sessions")
             
-            plt.savefig(path, bbox_inches='tight')
+            plt.savefig(path+'number_of_answers.svg', bbox_inches='tight')
             plt.close()
     
     
-    def _twin_response_time(self,data, ax1, path='', invert_response_time=True):
-        ax2 = ax1.twinx()
-        
-        ax2.plot(data.index, data.values, 'red')
-        ax2.set_ylabel('Mean response time', color='red')
-        if invert_response_time:
-            plt.gca().invert_yaxis()
-        for tl in ax2.get_yticklabels():
-            tl.set_color('red')
-    
-    
-    def success_response(self,path='',plot_response_time=True,invert_response_time=True,threshold=15):
+    def success(self,path='',threshold=15):
         """Draws graph of mean success and mean response per session.
         
-        :param plot_response_time: whether to draw response time plot -- default is True
-        :param invert_response_time: whether to invert plot of response time -- default is True
         :param threshold: how many sessions to draw -- default is 10
         :param path: output directory -- default is '' (current_dir)
         """
 
         if not path:
-            path = self.current_dir+'/graphs/successresponse.svg'
+            path = self.current_dir+'/graphs/'
         data = analysis.mean_success_session(self.frame,threshold)
 
         if not data.empty:
-            #setup mean_success_rate first
             fig, ax = plt.subplots()
+            ind = arange(len(data.index))
+            width=0.4
+
+            ax.bar(ind+width/2,data.values,width=width, color="green")
+            ax.set_title(u"Progress of success rate over sessions")
             
-            ax.plot(data.index, data.values, 'green')
-            
+            ax.set_xticklabels(ind)
+            ax.set_xticks(ind+width)
             ax.set_xlabel('Session number')
-            ax.yaxis.set_major_formatter(FuncFormatter(lambda x,y: "%1.2f%%"%(100*x))) #sets y-axis to show percentages
+            
             ax.set_ylabel('Mean success rate', color='green')
-            ax.set_title(u"Progress of success rate and response time over time")
+            #ax.yaxis.set_major_formatter(FuncFormatter(lambda x,y: "%1.2f%%"%(100*x))) #sets y-axis to show percentages
             for tl in ax.get_yticklabels():
                 tl.set_color('green')
-            
-            #setup mean_response_time
-            if plot_response_time:
-                data = analysis.mean_response_session(self.frame,threshold)
-                self._twin_response_time(data, ax, path, invert_response_time)
 
-            plt.savefig(path, bbox_inches='tight') 
+            plt.savefig(path+'success.svg', bbox_inches='tight') 
             plt.close()
     
     
-    def learning(self, path='', plot_response_time=True, invert_response_time=True, threshold=15):
+    def skill(self, path='', threshold=15):
         """Draws graph of mean skill and mean response time per session.
 
-        :param plot_response_time: whether to draw response time plot -- default is True
-        :param invert_response_time: whether to invert plot of response time -- default is True
         :param threshold: how many sessions to draw -- default is 10
         :param path: output directory -- default is '' (current_dir)
         """
 
         if not path:
-            path = self.current_dir+'/graphs/learning.svg'
-        data = analysis.mean_user_skill(self.frame,self.difficulties,threshold)
-        data = analysis.predict_success_user(data)
+            path = self.current_dir+'/graphs/'
+        data = analysis.mean_skill_session(self.frame,self.difficulties,threshold)[0]
 
         if not data.empty:
             fig, ax = plt.subplots()
-            ax.plot(data.index, data.values, 'green')
+            ind = arange(len(data.index))
+            width=0.4
+
+            ax.bar(ind+width/2,data.values,width=width, color="green")
+            ax.set_title(u"Progress of skill over sessions")
             
+            ax.set_xticklabels(ind)
+            ax.set_xticks(ind+width)
             ax.set_xlabel('Session number')
-            ax.set_ylabel('User\'s skill',color='green')
-            ax.yaxis.set_major_formatter(FuncFormatter(lambda x,y: "%1.2f%%"%(100*x))) #sets y-axis to show percentages
-            ax.set_title(u"Progress of user's skill and response time over sessions")
+            
+            ax.set_ylabel('Mean success rate', color='green')
+            #ax.yaxis.set_major_formatter(FuncFormatter(lambda x,y: "%1.2f%%"%(100*x))) #sets y-axis to show percentages
             for tl in ax.get_yticklabels():
                 tl.set_color('green')
 
-            if plot_response_time:
-                data = analysis.mean_response_session(self.frame,threshold)
-                self._twin_response_time(data, ax, path, invert_response_time)
-            plt.savefig(path, bbox_inches='tight') 
-            plt.close()
+            plt.savefig(path+'skill.svg', bbox_inches='tight') 
+            plt.close()        

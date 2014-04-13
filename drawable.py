@@ -30,13 +30,13 @@ class Drawable():
             self.frame = self.frame[self.frame.response_time<60000]
            
             if user is not None:
-                print "Filtered dataframe for user.",user
+                #print "Filtered dataframe for user",user
                 self.frame = self.frame[self.frame.user==user]
             if place_asked is not None:
-                print "Filtered dataframe for country",place_asked
+                #print "Filtered dataframe for country",place_asked
                 self.frame = self.frame[self.frame.place_asked==place_asked]
             if session_numbers:
-                print "Added session numbers to dataframe"
+                #print "Added session numbers to dataframe"
                 self.frame = self.frame.groupby('user').apply(lambda x: add_session_numbers(x,self.session_duration))
             
             self.place_asked = place_asked
@@ -49,10 +49,10 @@ class Drawable():
         return self.get_country_record(id)['code'].values[0]
 
     def get_country_name(self,id):
-        return self.get_country_record(id)['country'].values[0]
+        return self.get_country_record(id)['name'].values[0]
     
-    def get_country_area(self,id):
-        return self.get_country_record(id)['area'].values[0]
+    '''def get_country_area(self,id):
+        return self.get_country_record(id)['area'].values[0]'''
     
     def set_frame(self,frame):
         self.frame = frame

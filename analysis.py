@@ -7,6 +7,7 @@ from math import exp
 from collections import defaultdict
 import inputoutput
 
+
 def add_session_numbers(frame,session_duration):
     """Assignes session number to every answer.
 
@@ -28,17 +29,6 @@ def get_session_lengths(frame):
     return (end-start)/np.timedelta64(1,'s')
 
 
-def sessions_start_end(frame):
-    """Returns session's start and end for every session.
-    """
-
-    result = pd.DataFrame()
-    group = frame.groupby('session_number')
-    result['start'] = group.first()['inserted']
-    result['end'] = group.last()['inserted']
-    return result
-
-
 def first_questions(frame):
     """Returns first questions for every session.
     """
@@ -50,7 +40,7 @@ def _logis(value):
     return (1.0 / (1 + exp(-value)))
 
 
-def _elo(answer, prior_skill, user_number_of_answers, difficulty, place_number_of_answers):
+def elo(answer, prior_skill, user_number_of_answers, difficulty, place_number_of_answers):
     """Modified implementation of elo from https://github.com/proso/geography/blob/master/main/geography/models/prior.py
     
     ELO model that returns updated values of country's difficulty and user's skill
@@ -77,6 +67,52 @@ def _elo(answer, prior_skill, user_number_of_answers, difficulty, place_number_o
             difficulty- k2 * (result - prediction))
 
 
+def get_difficulties(frame, path = ''):
+    """Helper function to calculate difficulties for every country.
+    """
+    
+    first = first_questions(frame.groupby(['user','session_number']))
+    first = first.set_index('user')
+    
+    places = defaultdict(inputoutput.defaultdict_factory)
+    users  = defaultdict(inputoutput.defaultdict_factory)
+    
+    for row in first.iterrows():
+        answer_user = row[0]
+        answer_place = row[1]['place_asked']
+        
+        user = users[(answer_user,answer_place)]
+        place = places[answer_place]
+        update = elo(row[1],user[0],user[1],place[0],place[1])
+        
+        users[(answer_user,answer_place)] = [update[0],user[1]+1]
+        places[answer_place] = [update[1],place[1]+1]
+    
+    if path:
+        inputoutput.save_difficulties(places,path)
+    return places
+    
+
+def difficulty_probabilities(difficulties):
+    """Returns predicted probabilities of success for average user.
+    """
+    
+    result = []
+    for item in difficulties.iteritems():
+        result += [_logis(-item[1][0])]
+    return pd.Series(result,index=difficulties.keys())
+    
+
+def success_probabilities(skills,difficulties):
+    """User-specific probabilities of success.
+    """
+    
+    result = []
+    for item in skills.iteritems():
+        result += [_logis(item[1][0] - difficulties[item[0]][0])]
+    result = pd.Series(result,index=skills.keys())
+    return result
+    
 
 ################################################################################
 
@@ -116,7 +152,7 @@ def number_of_answers(frame,right=None):
     return answers['place_asked'].value_counts()
 
 
-def response_time_place(frame, right=None):
+def response_time(frame, right=None):
     """Returns dataframe of mean response times per country.
     
     :param right: filter only right/wrong/both answers
@@ -129,7 +165,7 @@ def response_time_place(frame, right=None):
     elif right == False:
         answers = answers[answers.place_asked!=answers.place_answered]
     answers = answers.groupby('place_asked')
-    return answers['response_time'].mean()
+    return answers['response_time'].mean()        
 
 
 def mistaken_countries(frame, threshold=None):
@@ -224,34 +260,7 @@ def mean_success_session(frame,session_threshold=15):
     return pd.Series(rates)
 
 
-def get_difficulties(frame, path = ''):
-    """Helper function to calculate difficulties for every country.
-    """
-    
-    first = first_questions(frame.groupby(['user','session_number']))
-    first = first.set_index('user')
-    
-    tuple_factory = lambda : (0,0)
-    places = defaultdict(tuple_factory)
-    users  = defaultdict(tuple_factory)
-    
-    for row in first.iterrows():
-        answer_user = row[0]
-        answer_place = row[1]['place_asked']
-        
-        user = users[(answer_user,answer_place)]
-        place = places[answer_place]
-        update = _elo(row[1],user[0],user[1],place[0],place[1])
-        
-        users[(answer_user,answer_place)] = [update[0],user[1]+1]
-        places[answer_place] = [update[1],place[1]+1]
-    
-    if not path:
-        inputoutput.save_difficulties(place,path)
-    return places
-    
-
-def mean_user_skill(frame, difficulties,threshold=15):
+def mean_skill_session(frame, difficulties,threshold=15):
     """Returns progress of mean user skill over sessions.
     there are probably better ways to implements this, dgaf now
     """
@@ -259,38 +268,23 @@ def mean_user_skill(frame, difficulties,threshold=15):
     first = first_questions(frame.groupby(['session_number']))
     first = first.set_index('user')
     result = []
-    skills = defaultdict(lambda : (0,0))
+    skills = defaultdict(inputoutput.defaultdict_factory)
+    
+    if threshold is None:
+        limit = first.session_number.max()+1
+    else:
+        limit = threshold
 
-    for i in range(0,first.session_number.max()+1):
+    for i in range(0,limit):
         temp = first[first.session_number==i]
         for row in temp.iterrows():
             answer_user = row[0]
             answer_place = row[1]['place_asked']            
-            user = skills[(answer_user,answer_place)]
+            user = skills[answer_place]
             place = difficulties[answer_place]
 
-            update = _elo(row[1],user[0],user[1],place[0],place[1])
-            skills[(answer_user,answer_place)] = [update[0],user[1]+1]
-
-        result += [sum([item[1][0] for item in skills.iteritems()])/float(len(skills.items()))] #one-liner for calculating mean of difficulties for current session and appending it to result
-    return pd.Series(result[:threshold])
-
-
-def predict_success_average(difficulties):
-    """Returns predicted probabilities of success for average user.
-    """
+            update = elo(row[1],user[0],user[1],place[0],place[1])
+            skills[answer_place] = (update[0],user[1]+1)
     
-    result = []
-    for item in difficulties.iteritems():
-        result += [_logis(-item[1][0])]
-    return pd.Series(result,index=difficulties.keys())
-    
-    
-def predict_success_user(skills):
-    """Returns predicted probabilities of success for user.
-    """
-    
-    result = []
-    for item in skills.iteritems():
-        result += [_logis(item[1])]
-    return pd.Series(result,index=skills.keys()) #transform skills to probabilities
+        result += [success_probabilities(skills,difficulties).mean()]
+    return (pd.Series(result),skills)
